@@ -8,6 +8,8 @@ Jonald Fyookball
 
 ## Acknowledgements
 Dexx7, James Cramer, Mark B. Lundeberg for review and suggestions
+
+# NFT
  
 The [SLP Token Type 1 Protocol Specification](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md) was originally designed for fungible tokens.  However, it is possible to use the same protocol to support non-fungible tokens (NFT) as well.
 
