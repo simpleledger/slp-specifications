@@ -33,7 +33,7 @@ Besides only requiring 1 initial transaction, the advantage to this approach is 
 
 A better approach is to simply have one genesis transaction for each unique token.  This would give every individual token its own token id, which would not change.  Since the token id is passed along with every token transfer in SLP, the id would be persistent and could be used by any off-chain system to quickly retrieve the metadata associated with the token.  The existing SLP validation engines can be used to ensure the integrity of the token chain.
 
-The necessity to initiate an individual genesis transaction for every token is only a minor drawback since a transaction would eventually be needed to separate the token from the others in a set.  The only difference is that you would be unable to mint them en masse to set them aside.
+The necessity to initiate an individual genesis transaction for every token is only a minor drawback since a transaction would eventually be needed to separate the token from the others in a set.  The main differences are that you would be unable to mint them en masse to set them aside, nor would you be able to limit the supply of any given token class.  The latter conern would certainly be a hinderence for fungible tokens, but is much less so for NFT.
 
 Rather than adding additional metadata to the SLP genesis transaction to prove a token belongs to a certain group (such as a cryptographic signature), we can merely use the same Bitcoin address for issuance by convention.  In other words, all tokens in a class would have a genesis transaction coming from the same address.
 
