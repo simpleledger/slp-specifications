@@ -8,7 +8,7 @@
 ### URL: [bitcoinfiles.com](bitcoinfiles.com)
 
 ## Authors
-James Cramer
+James Cramer, Attila Aros
 
 ## Acknowledgements
 Mark Lundeberg, for further simplifying the protocol
@@ -16,8 +16,6 @@ Mark Lundeberg, for further simplifying the protocol
 Jonald Fyookball, for various comments and considerations
 
 Calin Culianu, for EC SLP Wallet implementation assistance
-
-Attila Aros, for suggesting IFPS metadata in file uploads
 
 hapticpilot, for IPFS and URI formatting suggestions
 
@@ -84,7 +82,7 @@ Files are located on the blockchain using the transaction id of the file's metad
 Immutable hyperlinks to files stored off-chain can be created using Type 0x02 BFP message.  The file's URI shall be used to identify the external storage device and the relative location of the file on that device.
 
 1. **Metadata Transaction OP_RETURN:** A single transaction containing an OP_RETURN message at output index 0 (i.e., vout:0) shall be provided.  The required format is:
-   -  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <file_uri_utf8> <file_uri_metadata_utf8> <filename_no_extension_utf8*> <file_extension_utf8*> <size_bytes_int*> <file_sha256_int*> `
+   -  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <file_uri_utf8> <filename_no_extension_utf8*> <file_extension_utf8*> <size_bytes_int*> <file_sha256_int*> `
 
 #### 2.3.2 Procedure for downloading off-chain files from hyperlinks
 
@@ -143,27 +141,35 @@ At the time of writing, the latest version of IPFS is `ipfs version 0.4.17` and 
 
 It is *recommended* that user agents calculate the IPFS hash for a file using `ipfs add -n` (and the necessary parameters). This will ensure maximum compatibility for other users, in the event that the content has been garbaged collected from all live IPFS nodes and a user wishes to make the content available again under the same IPFS hash.
 
-The facilite being able to easily recreate the IPFS hash, we are *recommending* that users include the optional `<file_uri_metadata_utf8>` to inform clients what IPFS hashing options were used.
+The facilite being able to easily recreate the IPFS hash, we are *recommending* that users include additional/optional URI query params to inform clients what IPFS hashing options were used.
 
-The parameter `<file_uri_metadata_utf8>` is a tab delimited utf8 string of the form:
+Query format example:
+`Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpterKC7z?ver=<string>&chunker=<string>&trickle=<int>&hash=<string>`
 
-`<ipfs_options_info_version|<known_working_ipfs_str_version>|<chunker_str_utf8>|<trickle_bool_int>|<hash>|`
-
-Note: The --cid-version is not included, since it is a self-describing format and can be identified from the IPFS hash itself.
-
-`ipfs_options_info_version` is a microformat, here set to `1` to be used later in the event we want to change the contents of this tab delimited string.
+It is *recommended** that the user agent sets these parameters for all the command line options for `ipfs add -n` and then provides these values  explicitly to enable others to create the precise hash.  On the other hand, the defaults are not expected to change anytime soon, therefore as long as the user is using an unmodified version of ipfs, then they should be able to easily obtain the same hash.
 
 Examples:
 
-` `: Any empty string is considered to use the default (best effort guesses of what settings were used)
-`||||`: This means it is not provided (use defaults, best effort guesses).
-`1||||`: This means it is not provided (use defaults, best effort guesses).
-`1|0.4.17||||`: Version is set, but agent did not provide any additional information
-`1|0.4.17|size-262144||`: Version is set, and chunker option set
-`1|0.4.17|size-262144|1|`: Version is set, chunker option set, and trickle is set to true
-`1||size-262144|0|sha256`: Version unknown, chunker option set, trickle is set to false, and sha256 is the hashing algorithm.
+Only IPFS version is defined (default and best effort to attempt to recreate hash)
+`Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpterKC7z?ver=0.4.17`
+- ver: `0.4.17` is the known working version of IPFS that hash was created with
 
-It is *recommended** that the user agent sets all the command line options for `ipfs add -n` and then provides these values here explicitly to enable others to create the precise hash.  On the other hand, the defaults are not expected to change anytime soon, therefore as long as the user is using an unmodified version of ipfs, then they should be able to easily obtain the same hash.
+Just the IPFS hash is provided (default and best effort to attempt to recreate hash)
+`Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpterKC7z`
+
+All options explicitly defined: (will yield the same hash if all options are matching)
+`Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpterKC7z?ver=0.4.17&chunker=size-262144&trickle=0&hash=sha256`
+- ver: `0.4.17` is the known working version of IPFS that hash was created with
+- chunker: `size-262144` is the default value
+- trickle: `0` is disabled by default
+- hash: `sha256` is the default algorithm
+
+All options explicitly defined except chunker: (will yield the same hash if all options are matching)
+`Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpterKC7z?ver=0.4.17&trickle=1&hash=sha256`
+- ver: `0.4.17` is the known working version of IPFS that hash was created with
+- trickle: `1` is disabled by default
+
+The user agent can infer that `chunker` and `hash` should be the default values as of version 0.4.17 and to enable `trickle`.
 
 
 ### 2.4 Folders (Message Type = 0x03)
