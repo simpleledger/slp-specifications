@@ -18,7 +18,7 @@ Jonald Fyookball, for various comments and considerations
 Calin Culianu, for EC SLP Wallet implementation assistance
 
 ## 1. Introduction
-The following presents a simple protocol for adding files to the Bitcoin Cash blockchain. The protocol also allows for creating immutable URIs (Uniform Resource Identifiers) pointing to off-chain data storage systems. The motivation for this protocol was driven by the a lack of a reliable anonymous file storage services with a simple API.
+The following presents a simple protocol for adding files to the Bitcoin Cash blockchain. The protocol also allows for creating immutable URIs (Uniform Resource Identifiers) pointing to off-chain data storage systems. The motivation for this protocol was driven by the lack of reliable and anonymous file upload and storage systems, which have a simple API.
 
 The original purpose of this protocol was to facilitate the uploading of JSON documents associated with a SLP token's GENESIS transaction. BFP is a separate protocol from SLP Tokens, but its design uses a DAG (Directed Acyclic Graph) to link file chunks and metadata together in multiple transactions so in a way it is similar to SLP tokens.
 
@@ -186,9 +186,7 @@ IPFS options (which determine the IPFS hash created with `ipfs add -n`)
 
 --trickle: false
 
---cid-version: CIDv0 (Starts with 'Qm...')
-
-Note: this is a [self-describing format](https://github.com/ipld/cid#versions) and therefore can be uniquely determined by looking at the hash prefix
+--cid-version: CIDv0 (Starts with 'Qm...') Note: this is a [self-describing format](https://github.com/ipld/cid#versions) and therefore can be uniquely determined by looking at the hash prefix
 
 --hash: sha256
 
