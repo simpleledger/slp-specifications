@@ -60,7 +60,6 @@ It is recommended that an initial funding transaction be created (as shown in th
 
 4. **Data Chunk Transaction Baton:** For any non-final data chunk transaction a baton shall be used as a reference pointer to the file's next data chunk or metadata. Output index 1 (i.e., vout: 1) shall contain the UTXO dust that shall be spent in the next data chunk or metadata transaction.  The baton shall be spent as the first input (i.e., vin: 0) of the next data chunk or metadata.
 
-
 #### 2.2.2 Procedure for downloading on-chain files
 
 Files are located on the blockchain using the hash of the transaction containing the file's Metadata OP_RETURN message. In order to download the full file content the software implementation simply needs to follow the following steps:
@@ -68,7 +67,7 @@ Files are located on the blockchain using the hash of the transaction containing
 1. Download the file's metadata transaction
 2. Parse for Metadata OP_RETURN message located at the first output (i.e., vout:0) within that transaction
 3. If there is only 1 chunk and a chunk is provided within the metadata message then the procedure is complete and the file can be reconstructed from the data chunk contents.
-4. If there are more chunks that need to be downloaded then use the transaction hash specified at vin:0 to find the next data chunk and parse data chunk transactions using the "Dat Chunk OP_RETURN" format.
+4. If there are more chunks that need to be downloaded then use the transaction hash specified at vin:0 to find the next data chunk and parse data chunk transactions using the "Data Chunk OP_RETURN" format.
 5. Repeat step 4 until all of the data chunks have been parsed.
 6. Assemble the file from the data chunks using the first signed = first chunk rule.
 
@@ -79,7 +78,7 @@ Files are located on the blockchain using the hash of the transaction containing
 Immutable URIs to files stored off-chain can be created using a type 0x02 BFP message. Both URNs (files referenced by name / hash) and URLs (files referenced by their specific network location) are acceptable.
 
 1. **Metadata OP_RETURN Message:** A single transaction containing an OP_RETURN message at output index 0 (i.e., vout:0) shall be provided.  The required format is:
-   -  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <file_uri_utf8> <filename_no_extension_utf8*> <file_extension_utf8*> <size_bytes_int*> <file_sha256_int*> `
+   -  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <file_uri_utf8> <filename_no_extension_utf8*> <file_extension_utf8*> <size_bytes_int*> <file_sha256_int*>`
 
 #### 2.3.2 Procedure for downloading off-chain files via URIs
 
@@ -152,7 +151,7 @@ The usage of a transaction id prefix shall have no impact on the protocol rules,
 
 #### 7.1 IPFS downloads
 
-[IPFS](https://ipfs.io) is a system for storing and distributing files. The key benefit of IPFS is decentralization and consistent addressability.  An IPFS can be used for storing files off-chain as either a cache or a more efficient means of data storage. 
+[IPFS](https://ipfs.io) is a system for storing and distributing files. The key benefit of IPFS is decentralization and consistent addressability.  An IPFS can be used for storing files off-chain as either a cache or a more efficient means of data storage.
 
 The URI location for a file stored on IPFS is uniquely determined by the file's hash (and a few other settings explained below shortly).  The OP_RETURN messages presented in Sections 2.2.1.2 and 2.3.1.1 allow for `<file_uri_utf8*>` which should be leveraged when using IPFS URIs.
 
@@ -164,7 +163,7 @@ For example, for a IPFS file with hash `Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpt
 
 - User browser agent *may* choose to query an IPFS swarm directly instead using a pure Javascript/Browser implementation such as [js-ipfs](https://github.com/ipfs/js-ipfs).
 - User agent *may* to set a time limit for how long they are willing to wait for IPFS to resolve the content, and instead opt for retrieving the individual chunk transactions to serve their request instead.
-- If the content is not retrievable or not found on IPFS, then the user *may* re-upload the content to IPFS after retrieving the content bytes from the transaction chunks. 
+- If the content is not retrievable or not found on IPFS, then the user *may* re-upload the content to IPFS after retrieving the content bytes from the transaction chunks.
 
 The next section highlights considerations for performing an upload as there are some IPFS specific flags that need to be set consistently to arrive at the same IPFS hash.
 
