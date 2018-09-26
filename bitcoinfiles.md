@@ -30,11 +30,10 @@ This protocol specification describes the requirements for handling the storage 
 
 Unique BFP message types are used to represent different constructs in the BFP protocol. In any BFP OP_RETURN message, the BFP message type is represented by the required field named `bfp_msg_type`. There are currently three types of BFP constructs. They are:
 
-- `bfp_msg_type = 0x01`: An on-chain file.
-- `bfp_msg_type = 0x02`: An off-chain file referenced via a URI.
-- `bfp_msg_type = 0x03`: A folder.
+- `bfp_msg_type = 0x01`: A file.
+- `bfp_msg_type = 0x02`: A folder.
 
-### 2.2 On-chain File (BFP Message Type = 0x01)
+### 2.2 A File (BFP Message Type = 0x01)
 
 Files are uploaded to the blockchain in a series of data chunks encapsulated within OP_RETURN messages located at vout=0 (i.e. the first output) in each data chunk's respective transaction.  The file chunks reference each other using the vout=1 output as a pointer to the location of the next data chunk.  The file can be shared with anyone by sharing the transaction hash of the last uploaded data chunk containing optional file metadata.  The following illustration shows an example two-part file upload using this protocol.
 
@@ -66,34 +65,25 @@ Files are located on the blockchain using the hash of the transaction containing
 
 1. Download the file's metadata transaction
 2. Parse for Metadata OP_RETURN message located at the first output (i.e., vout:0) within that transaction
-3. If there is only 1 chunk and a chunk is provided within the metadata message then the procedure is complete and the file can be reconstructed from the data chunk contents.
-4. If there are more chunks that need to be downloaded then use the transaction hash specified at vin:0 to find the next data chunk and parse data chunk transactions using the "Data Chunk OP_RETURN" format.
-5. Repeat step 4 until all of the data chunks have been parsed.
-6. Assemble the file from the data chunks using the first signed = first chunk rule.
+3. If `chunk_count` = 1 *and* a data chunk is provided within the metadata message then the procedure is complete and the file can be reconstructed from the data chunk contents.
+4. If `chunk_count` = 0 the file is not being stored on-chain.  Even if `chunk_data` is not empty the data chunk should be treated as if it isn't there by an implementation.  An off-chain only file can be stored if `chunk_count` = 0 *and* `file_uri_utf8` is not empty; this may be valuable for applications where having immutable store of file metadata has value.
+5. If there are more chunks that need to be downloaded then use the transaction hash specified at vin:0 to find the next data chunk and parse data chunk transactions using the "Data Chunk OP_RETURN" format.
+6. Repeat step 4 until all of the data chunks have been parsed.
+7. Assemble the file from the data chunks using the first signed = first chunk rule.
 
-### 2.3 Off-chain File (BFP Message Type = 0x02)
+#### 2.2.3 Procedure for downloading off-chain files
 
-#### 2.3.1 Rules for creating URIs referencing off-chain files
+Cases where `file_uri_utf8` is provided to an off-chain storage location implementations may elect how to handle downloads.  Use of IPFS is recommended and additional considerations for using IPFS have been provided in Appendix A.
 
-Immutable URIs to files stored off-chain can be created using a type 0x02 BFP message. Both URNs (files referenced by name / hash) and URLs (files referenced by their specific network location) are acceptable.
-
-1. **Metadata OP_RETURN Message:** A single transaction containing an OP_RETURN message at output index 0 (i.e., vout:0) shall be provided.  The required format is:
-   -  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <file_uri_utf8> <filename_no_extension_utf8*> <file_extension_utf8*> <size_bytes_int*> <file_sha256_int*>`
-
-#### 2.3.2 Procedure for downloading off-chain files via URIs
-
-Downloading files should be handled per the requirements for each specific off-chain storage system. The requirements should be deterministic based on the provided URI.  For convenience details and recommendations for the popular IPFS have been provided in Appendix A.
-
-
-### 2.4 Folders (BFP Message Type = 0x03)
+### 2.3 Folders (BFP Message Type = 0x02)
 
 A folder message type stores one or more transaction hashes pointing to files and other folders.  This type of message simply provides a list of transaction hashes.
 
-#### 2.4.1 Rules for creating folders
+#### 2.3.1 Rules for creating folders
 
 1. **Metadata Transaction OP_RETURN Message:** A single transaction containing an OP_RETURN message at output index 0 (i.e., vout:0).  The required format for a new folder is:
 
-   * `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x03> <list_page_count> <folder_name*>  <folder_description*> <txid_0_int> ... <txid_i_int*> ... <txid_n_int*>`
+   * `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <list_page_count> <folder_name*>  <folder_description*> <txid_0_int> ... <txid_i_int*> ... <txid_n_int*>`
 
      Where `<txid_0_int>`  and `<txid_x_int*>` represent a transaction hash pointing to another BFP folder or BFP file.  At least one transaction hash is required and additional optional transaction hashes may be provided.
 
@@ -103,7 +93,7 @@ A folder message type stores one or more transaction hashes pointing to files an
 
 3. **List Page Baton:**  For any list page transaction a baton is used to create a reference pointer from a folder Metadata transaction to a List Page transaction.  Output index 1 (i.e., vout: 1) shall contain the UTXO dust that shall be spent in the next transaction as the first input (i.e., vin: 0) to create the valid reference.  The next transaction after a List Page transaction can be either another List Page transaction *OR* at the folder's Metadata transaction.
 
-#### 2.4.2 Procedures for discovering files within a folder
+#### 2.3.2 Procedures for discovering files within a folder
 
 The rules for determining what files and folders are contained within in a folder are simple.  An implementation shall parse the Metadata OP_RETURN message and any upstream List Page OP_RETURN message transactions using the specified format for the Metadata and List Page OP_RETURN messages.
 
@@ -140,14 +130,13 @@ The usage of a transaction id prefix shall have no impact on the protocol rules,
 
 * **v0.2 - September 26, 2018**
   * Added BFP Message Type ( `bfp_msg_type` )
-  * Added off-chain storage BFP Message Type = 0x02
-  * Added folder BFP Message Type = 0x03
+  * Added folder BFP Message Type = 0x02
   * Added file URI preferences
   * Added file encryption considerations
   * Added Appendix A - IPFS Considerations
   * Added co-authors Attila Aros and hapticpilot
 
-##7. Appendix A - IPFS Usage
+## 7. Appendix A - IPFS Usage
 
 #### 7.1 IPFS downloads
 
