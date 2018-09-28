@@ -11,11 +11,7 @@
 James Cramer, Attila Aros, hapticpilot
 
 ## Acknowledgements
-Mark Lundeberg, for further simplifying the protocol
-
-Jonald Fyookball, for various comments and considerations
-
-Calin Culianu, for EC SLP Wallet implementation assistance
+Mark Lundeberg, Jonald Fyookball, Calin Culianu, Adam Gall for various suggestions and considerations
 
 ## 1. Introduction
 The following presents a simple protocol for adding files to the Bitcoin Cash blockchain. The protocol also allows for creating immutable URIs (Uniform Resource Identifiers) pointing to off-chain data storage systems. The motivation for this protocol was driven by the lack of reliable and anonymous file upload and storage systems, which have a simple API.
@@ -50,7 +46,7 @@ It is recommended that an initial funding transaction be created (as shown in th
 1. **Data Chunk Order:** Data chunks shall be ordered in the order that the transactions are signed.  This means the first chunk of the file represents the first part of the file and is signed first.  The last data chunk of the file is signed last and may be placed within the final metadata transaction if there is sufficient room.
 
 2. **Metadata OP_RETURN Message:** The final signed transaction for a file upload must contain an OP_RETURN output message located at output index 0 (i.e., vout:0).  The required format for this final message is:
-   *  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x01> <chunk_count_int> <filename_no_extension_utf8*> <file_extension_utf8*> <size_bytes_int*> <file_sha256_int*> <file_uri_utf8*> <chunk_X_data_bytes*>`
+   *  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x01> <chunk_count_int> <filename_no_extension_utf8*> <file_extension_utf8*> <file_byte_count_int*> <file_sha256_bytes*> <previous_file_version_sha256_bytes*> <file_uri_utf8*> <chunk_X_data_bytes*>`
    * If the file includes only 1 data chunk *AND* that data chunk can fit within the metadata transaction then only a single transaction is required for the upload.
    * If the file includes multiple data chunks a Data Chunk OP_RETURN transaction described below shall be used to facilitate uploading of the data chunks.
 
@@ -83,7 +79,7 @@ A folder message type stores one or more transaction hashes pointing to files an
 
 1. **Metadata Transaction OP_RETURN Message:** A single transaction containing an OP_RETURN message at output index 0 (i.e., vout:0).  The required format for a new folder is:
 
-   * `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <list_page_count> <folder_name*>  <folder_description*> <txid_0_int> ... <txid_i_int*> ... <txid_n_int*>`
+   * `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x02> <list_page_count> <folder_name*> <folder_description*> <txid_0_int> ... <txid_i_int*> ... <txid_n_int*>`
 
      Where `<txid_0_int>`  and `<txid_x_int*>` represent a transaction hash pointing to another BFP folder or BFP file.  At least one transaction hash is required and additional optional transaction hashes may be provided.
 
@@ -108,7 +104,7 @@ The rules for determining what files and folders are contained within in a folde
 5. Endianness: All data pushes, other than the Lokad protocol identifier, shall be pushed to the Script stack using big-endian data byte ordering.
 6. The data encoding for each variable is included as the final part of the variable name.
 
-## 4. File URI Prefixes
+## 4. Bitcoinfile URI
 
 This part of the specification in not a protocol rule and is only a recommendation for an improved user experience.  It is recommended that a prefix of "bitcoinfile:" be used for the transaction hash/id representing either on-chain or off-chain file.  In the future the concept of folders can be added to this protocol and the prefix of "bitcoinfiles:" should be used.
 
@@ -125,6 +121,7 @@ The usage of a transaction id prefix shall have no impact on the protocol rules,
 1. Network rules currently limit the number of chained transactions to 25 per block, this limits the data throughput of this protocol to slightly more than 5kB files.  Implementations will need consider the number of chained transactions a UTXO may already has before creating a file upload.  For example, the file upload may be limited to fewer than 25 transactions if the user has made several transactions prior to the file uploads within the same block height.
 2. Set a limit for file upload sizes to encourage wise use of blockchain space
 3. File data can be encrypted in a number of ways.  At this time it is recommended that the file extension field be utilized to convey the type of encryption if the native file format does not have internal mechanism for handling encryption (e.g., PDF).
+4. In some cases of file record keeping having the ability to reference a previous file version's hash for informational purposes can be very useful.  For this reason the metadata field named `<previous_file_version_sha256_bytes*>` has been provided.
 
 ## 6. Specification Updates
 
