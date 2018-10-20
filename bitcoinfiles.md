@@ -24,7 +24,7 @@ This protocol specification describes the requirements for handling the storage 
 
 ### 2.1 BFP Types
 
-Unique BFP message types are used to represent different constructs in the BFP protocol. In any BFP OP_RETURN message, the BFP message type is represented by the required field named `bfp_msg_type`. There are currently three types of BFP constructs. They are:
+Unique BFP message types are used to represent different constructs in the BFP protocol. In any BFP OP_RETURN message, the BFP message type is represented by the required field named `bfp_msg_type`. There are currently two types of BFP constructs. They are:
 
 - `bfp_msg_type = 0x01`: A file.
 - `bfp_msg_type = 0x02`: A folder.
