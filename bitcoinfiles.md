@@ -2,8 +2,8 @@
 
 # Bitcoin Files Protocol Specification
 
-### Specification version: 0.2
-### Date published: September 21, 2018
+### Specification version: 0.3
+### Date orginally published: September 21, 2018
 
 ### URI: [bitcoinfiles.com](bitcoinfiles.com)
 
