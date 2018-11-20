@@ -26,8 +26,9 @@ This protocol specification describes the requirements for handling the storage 
 
 Unique BFP message types are used to represent different constructs in the BFP protocol. In any BFP OP_RETURN message, the BFP message type is represented by the required field named `bfp_msg_type`. There are currently three types of BFP constructs. They are:
 
-- `bfp_msg_type = 0x01`: A file.
-- `bfp_msg_type = 0x02`: A folder.
+- `bfp_msg_type = 0x01`: A file (OP_RETURN storage).
+- `bfp_msg_type = 0x02`: A file (P2SH storage).
+- `bfp_msg_type = 0x03`: A folder.
 
 ### 2.2 A File (BFP Message Type = 0x01)
 
@@ -71,11 +72,24 @@ Files are located on the blockchain using the hash of the transaction containing
 
 Cases where `file_uri_utf8` is provided to an off-chain storage location implementations may elect how to handle downloads.  Use of IPFS is recommended and additional considerations for using IPFS have been provided in Appendix A.
 
-### 2.3 Folders (BFP Message Type = 0x02)
+### 2.3 A File (BFP Message Type = 0x02)
+
+Larger files (~100KB) may be stored on-chain using `bfp_msg_type` 0x02. This type is nearly identical to the 0x01 file type, however, files are uploaded to the blockchain in a series of data chunks encapsulated within the spending of P2SH outputs within `scriptSig` located at vin=0 (i.e. the first input index) for each data chunk's respective transaction.  The file chunks reference each other using the vout=1 output as a pointer to the location of the next data chunk.  The file can be shared with anyone by sharing the transaction hash of the last uploaded data chunk containing optional file metadata.  
+
+Redeem script shall have the following format:
+`OP_DROP ... OP_DROP <PubKey> OP_CHECKSIG`
+
+Unlocking script shall have the following format:
+`<signature> <data> ... <data> <redeem script>`
+
+Where `...` may represent `OP_DROP` and `<data>`repeated any number of valid times. The data items are pushed in approximately 520 byte pieces and shall be concatenated together to produce the whole data chunk associated with the transaction.
+
+
+### 2.4 Folders (BFP Message Type = 0x03)
 
 A folder message type stores one or more transaction hashes pointing to files and other folders.  This type of message simply provides a list of transaction hashes.
 
-#### 2.3.1 Rules for creating folders
+#### 2.4.1 Rules for creating folders
 
 1. **Metadata Transaction OP_RETURN Message:** A single transaction containing an OP_RETURN message at output index 0 (i.e., vout:0).  The required format for a new folder is:
 
@@ -89,7 +103,7 @@ A folder message type stores one or more transaction hashes pointing to files an
 
 3. **List Page Baton:**  For any list page transaction a baton is used to create a reference pointer from a folder Metadata transaction to a List Page transaction.  Output index 1 (i.e., vout: 1) shall contain the UTXO dust that shall be spent in the next transaction as the first input (i.e., vin: 0) to create the valid reference.  The next transaction after a List Page transaction can be either another List Page transaction *OR* at the folder's Metadata transaction.
 
-#### 2.3.2 Procedures for discovering files within a folder
+#### 2.4.2 Procedures for discovering files within a folder
 
 The rules for determining what files and folders are contained within in a folder are simple.  An implementation shall parse the Metadata OP_RETURN message and any upstream List Page OP_RETURN message transactions using the specified format for the Metadata and List Page OP_RETURN messages.
 
@@ -139,7 +153,7 @@ The usage of a transaction id prefix shall have no impact on the protocol rules,
 
 [IPFS](https://ipfs.io) is a system for storing and distributing files. The key benefit of IPFS is decentralization and consistent addressability.  An IPFS can be used for storing files off-chain as either a cache or a more efficient means of data storage.
 
-The URI location for a file stored on IPFS is uniquely determined by the file's hash (and a few other settings explained below shortly).  The OP_RETURN messages presented in Sections 2.2.1.2 and 2.3.1.1 allow for `<file_uri_utf8*>` which should be leveraged when using IPFS URIs.
+The URI location for a file stored on IPFS is uniquely determined by the file's hash (and a few other settings explained below shortly).  The OP_RETURN messages presented in Sections 2.2.1.2 and 2.4.1.1 allow for `<file_uri_utf8*>` which should be leveraged when using IPFS URIs.
 
 - User agent *may* choose to query an IPFS gateway of their choice after retrieving a BFP file's Metadata transaction.
 
@@ -153,7 +167,7 @@ For example, for a IPFS file with hash `Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpt
 
 The next section highlights considerations for performing an upload as there are some IPFS specific flags that need to be set consistently to arrive at the same IPFS hash.
 
-#### 2.3.2.2 IPFS uploads
+#### 2.4.2.2 IPFS uploads
 
 IPFS hashes are uniquely determined by a few parameters, not simply the sha256 hash of the file content. This is unavoidable since IPFS provides different storage options, identifier versioning, and also needs some flexibility for the future.
 
