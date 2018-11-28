@@ -546,7 +546,10 @@ SCRIPT BROKEN DOWN:
   <td>length of token_name (35 bytes)</td>
  <tr>
  <tr>
-  <td>546574686572204c74642e20555320646f6c6c6172206261636b656420746f6b656e73</td>
+  <td>
+   546574686572204c74642e20555320646f6c6c61722062616<br/>
+   36b656420746f6b656e73
+  </td>
   <td>'Tether Ltd. US dollar backed tokens'</td>
  <tr>
  <tr>
@@ -558,7 +561,11 @@ SCRIPT BROKEN DOWN:
   <td>length of token_document_url (65 bytes)</td>
  <tr>
  <tr>
-  <td>68747470733a2f2f7465746865722e746f2f77702d636f6e74656e742f75706c6f6164732f323031362f30362f546574686572576869746550617065722e706466</td>
+  <td>
+   68747470733a2f2f7465746865722e746f2f77702d636f6e7<br/>
+   4656e742f75706c6f6164732f323031362f30362f54657468<br/>
+   6572576869746550617065722e706466
+  </td>
   <td>'https://tether.to/wp-content/uploads/2016/06/TetherWhitePaper.pdf'</td>
  <tr>
  <tr>
@@ -566,7 +573,10 @@ SCRIPT BROKEN DOWN:
   <td>length of token_document_hash (32 bytes)</td>
  <tr>
  <tr>
-  <td>db4451f11eda33950670aaf59e704da90117ff7057283b032cfaec7779313916</td>
+  <td>
+   db4451f11eda33950670aaf59e704da90117ff7057283b032<br/>
+   cfaec7779313916
+  </td>
   <td>token_document_hash</td>
  <tr>
  <tr>
@@ -636,7 +646,10 @@ SCRIPT BROKEN DOWN:
   <td>length of token_id (32 bytes)</td>
  </tr>
  <tr>
-  <td>550d19eb820e616a54b8a73372c4420b5a0567d8dc00f613b71c5234dc884b35</td>
+  <td>
+   550d19eb820e616a54b8a73372c4420b5a0567d8dc00f613b<br/>
+   71c5234dc884b35
+  </td>
   <td>token_id</td>
  </tr>
  <tr>
