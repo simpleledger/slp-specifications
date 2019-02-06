@@ -226,6 +226,8 @@ D. A token's genesis defines the protocol type (`token_type`) it is using.  This
 
 E. In a send, the input-sum or output-sum may exceed 2<sup>64</sup>−1 (64-bit integer limit) even though all summands are 64-bit integers. Such excessive sums are valid and so validators should avoid using accumulators that overflow in these conditions.
 
+F. SENDs that output 0 tokens are a strange corner case that have self-evident validity, like genesis transactions. In the case of a 0-output SEND, it doesn't matter whether any of the inputs are valid. Also, the token_id may refer to a nonexistent transaction, or a real genesis but of a different token_type.
+
 ## Transaction Detail
 
 ### Formatting
