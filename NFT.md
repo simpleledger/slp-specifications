@@ -9,6 +9,9 @@ Jonald Fyookball
 ## Acknowledgements
 Dexx7, James Cramer, Mark B. Lundeberg for review and suggestions
 
+## Extensions
+Groupable, supply limitable NFT im_uname 20190331
+
 # NFT
  
 The [SLP Token Type 1 Protocol Specification](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md) was originally designed for fungible tokens.  However, it is possible to use the same protocol to support non-fungible tokens (NFT) as well.
@@ -37,6 +40,26 @@ The necessity to initiate an individual genesis transaction for every token is o
 
 Rather than adding additional metadata to the SLP genesis transaction to prove a token belongs to a certain group (such as a cryptographic signature), we can merely use the same Bitcoin address for issuance by convention.  In other words, all tokens in a class would have a genesis transaction coming from the same address.
 
+## Extension: Groupable, supply limitable NFT tokens as a derivative of fungible tokens
+
+As described above, a problem with the "one genesis per token" approach is that one cannot limit the supply for any token class; additionally, passing batons to another minter is also impossible as the tokens are strictly linked by genesis address. Moreover, this approach centralizes minting authority in the hands of a single keypair, and can limit the usefulness of the product as a result. An approach that takes advantage of existing fungible SLP tokens is described below. This approach shall result in NFT tokens with additional flexibilities, and whose metadata still exist entirely onchain just as the fungible tokens.
+
+### Deriving NFT tokens from fungible tokens
+
+Create a fungible token using a GENESIS transaction; for optimal NFT quantity management, it is recommended that the fungible token to be created without decimal places. In addition to the usual fields, add "NFT1 " at the beginning of document URL to specify that this token can be used to mint NFT tokens. 
+
+To forge an NFT token, first prepare an UTXO with one or more of the NFT-enabled fungible tokens associated with it; then spend that UTXO in a GENESIS transaction that generates a new token with quantity of 1 and decimal places 0, prefixing its document URL with "NFT1_" followed by token hash of the fungible token for quick lookup, followed by a two-byte number indicating which input contained the "generating" token in question. This simultaneously generates a new token and burn one fungible token. Wallets that support this scheme can check whether a given NFT token is valid by tracing DAG up to genesis, check if the tx burned any of the fungible token it specified, and check the validity of that back to the genesis of said fungible token. Each NFT token generated this way will have its own secondary "NFT id" from the txid of its genesis, and can remain distinct from each other.
+
+The NFT token need not be absolutely limited in quantity by genesis of the fungible token; just like any other fungible tokens, the "generating" token can have its minting baton passed to the next address, maintaining flexibility if so wished.
+
+### Maintaining control over minting
+
+The scheme described above distributes NFT generating capability to any holder of the fungible token; it might be desirable for the minting authority to strictly control the ability to emit NFT tokens, but at the same time preserve guarantees about quantity limitations. To achieve that, simply generate the initial fungible tokens with the "NFT2 " prefix in document URL, and prefix NFT tokens generated with "NFT2_" followed by the fungible token's token id and input number as above. The key difference is that NFT2 tokens can only originate from burning a fungible token held by the address that receives token from the genesis transaction; wallets should interpret a generation from UTXOs associated with any other address as invalid.
+
+An exception to this rule is that if the minting baton is passed, then any address that received fungible tokens emitted by the baton also becomes valid generation addresses.
+
 ## Summary
 
 SLP already allows NFT simply by issuing a unique token type for each token to be created.  Tokens can be grouped together into classes by following the guideline of issuing all tokens in a class from the same Bitcoin address.  Token issuers can create and modify metadata specific to each unique token and store this off-chain, using the token id as an immutable unique identifier. 
+
+By linking genesis transactions to an existing fungible token, it is possible to create NFTs whose group and supply limits are easy to verify, similar to fungible tokens.
