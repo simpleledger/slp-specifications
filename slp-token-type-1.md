@@ -479,7 +479,7 @@ Initial implementations will focus on supporting the consensus-based forms of va
     OP_RETURN<br/>
     &lt;lokad_id: 'SLP\x00'&gt; (4 bytes, ascii)<br/>
     &lt;token_type: 1&gt; (1 to 2 byte integer)<br/>
-    &lt;transaction_type: 'COMMIT'&gt; (4 bytes, ascii) <br/>
+    &lt;transaction_type: 'COMMIT'&gt; (6 bytes, ascii) <br/>
     &lt;token_id&gt; (32 bytes)<br/>
     &lt;for_bitcoin_block_hash&gt; (32 bytes)<br/>
     &lt;block_height&gt; (8 byte integer)<br/>
