@@ -362,6 +362,10 @@ As with GENESIS, the MINT allows to end the baton, or further pass on the baton 
 &lt;token_id&gt; (32 bytes)<BR>
 &lt;mint_baton_vout&gt; (0 bytes or 1 byte between 0x02-0xff)<BR>
 &lt;additional_token_quantity&gt; (8 byte integer)
+&lt;token_ticker&gt; (optional, 0 to ∞ bytes, suggested utf-8)<br/>
+&lt;token_name&gt; (optional, 0 to ∞ bytes, suggested utf-8)<br/>
+&lt;token_document_url&gt; (optional, 0 to ∞ bytes, suggested ascii)<br/>
+&lt;token_document_hash&gt; (optional, 0 bytes or 32 bytes)<br/>
   </td>
     <td>any</td>
     <td>0</td>
