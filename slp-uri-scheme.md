@@ -44,8 +44,9 @@ Elements of the query component may contain characters outside the valid range. 
 | param        | = [chainid / amountparams / labelparam / messageparam / otherparam / reqparam] |
 | chainid      | = "chain=" *qchar                                            |
 | amountparams | = amountparam [ "&" amountparams ]                           |
-| amountparam  | = "amount=" [ tokenid ] *digit [ "." *digit ]                |
-| tokenid      | = *qchar ":"                                                 |
+| amountparam  | = "amount=" *digit [ "." *digit / tokenid / amountmode ]     |
+| tokenid      | = ":" *qchar                                                 |
+| amountmode   | = ":nftfromgroup"                                            |
 | labelparam   | = "label=" *qchar                                            |
 | messageparam | = "message=" *qchar                                          |
 | otherparam   | = qchar *qchar [ "=" *qchar ]                                |
@@ -56,10 +57,12 @@ Elements of the query component may contain characters outside the valid range. 
 
 ### Implementation Requirements
 
-1. Bitcoin Cash is the default blockchain using this URI scheme and the value "chain=BCH" is assumed if the `chainid` parameter is omitted. Even though Bitcoin Cash is the default blockchain it can still be included by using `chainid=BCH`.
+1. Bitcoin Cash is the default blockchain using this URI scheme and the value "chain=BCH" is assumed if the `chainid` parameter is omitted. Even though Bitcoin Cash is the default blockchain it can still be included (i.e., `chain=BCH`).
 2. If the `tokenid` field is omitted within `amountparam`, an amount request for `chainid` currency shall be inferred.
 3. If the `tokenid` field is provided within `amountparam`, an amount request for `tokenid` token residing on the `chainid` blockchain shall be inferred.
-4. The `*slpaddr` address format is specified [here](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md#slp-addr).
+4. Only a single `amountparam` parameter can be provided for each `tokenid`, and only a single amount for the base currency shall be made.
+5. If `amountmode` is omitted from the `amountparam` parameter then the payment shall be made using the tokenid specified.  If ":nftfromgroup" is provided for `amountmode` then the payment request can satisfied using any valid NFT originating from the NFT group tokenid provided.  Read NFT group specification [here](https://github.com/simpleledger/slp-specifications/blob/master/NFT.md#extension-groupable-supply-limitable-nft-tokens-as-a-derivative-of-fungible-tokens) for more information.  In the future other `amountmode` options may be possible.
+6. The `*slpaddr` address format is specified [here](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md#slp-addr).
 
 ### Examples
 
@@ -71,7 +74,7 @@ Please see the BNF grammar above for the normative syntax.
 
 * **Address with name:**
 	* `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?label=Satoshi-Nakamoto`
-	
+
 * **Request 10.0001 XYZ tokens to "Satoshi-Nakamoto":**
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=20.3&amount=<xyzTokenID>:10.0001&label=Satoshi-Nakamoto`
 
