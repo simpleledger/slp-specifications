@@ -76,13 +76,16 @@ Please see the BNF grammar above for the normative syntax.
 	* `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?label=Satoshi-Nakamoto`
 
 * **Request 10.0001 XYZ tokens to "Satoshi-Nakamoto":**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=20.3&amount=<xyzTokenID>:10.0001&label=Satoshi-Nakamoto`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=20.3&amount=10.0001:<xyzTokenID>&label=Satoshi-Nakamoto`
 
 * **Request 20.30 BCH & 1000 XYZ tokens to "Satoshi-Nakamoto":**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=20.3&amount=<xyzTokenID>:1000&label=Satoshi-Nakamoto`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=20.3&amount=1000:<xyzTokenID>&label=Satoshi-Nakamoto`
 
 * **Request 50 BCH & 1 ABC token with message:**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=50&amount=<abcTokenID>:1&label=Satoshi-Nakamoto&message=Donation%20for%20project%20xyz`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=50&amount=1:<abcTokenID>&label=Satoshi-Nakamoto&message=Donation%20for%20project%20xyz`
+
+* **Request any 1 NFT token from group XYZ (using "nftfromgroup"):**
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount=1&amount=1:<xyzGroupID>:nftfromgroup&label=Satoshi-Nakamoto`
 
 * **Some future version that has variables which are (currently) not understood and required and thus invalid:**
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999`
