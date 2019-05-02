@@ -41,9 +41,9 @@ Elements of the query component may contain characters outside the valid range. 
 | address      | = *slpaddr                                                   |
 | params       | = param [ "&" params ]                                       |
 | param        | = [ amountparam / multiamounts / labelparam / messageparam / otherparam / reqparam ] |
-| amountparam  | = "amount=" *digit [ "." *digit ] [ tokenid / amountflags ]  |
+| amountparam  | = "amount=" *digit [ "." *digit ] [ tokenid ]                |
 | multiamounts | = multiamount [ "&" multiamounts ]                           |
-| multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit / tokenid ]   |
+| multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit ] [ tokenid ] |
 | tokenid      | = ";" 64*hexchar [ ";" tokenflags ]                          |
 | tokenflags   | = tokenflag [ ";" tokenflags ]                               |
 | tokenflag    | = [ "isgroup" / *qchar ]                                     |
