@@ -11,7 +11,7 @@
 
 ## Purpose
 
-The purpose of this URI scheme is to enable users to easily make SLP token & cryptocurrency payments by simply clicking links on webpages or scanning QR Codes.
+The purpose of this URI scheme is to enable users to easily make SLP token & Bitcoin Cash payments by simply clicking links on webpages or scanning QR Codes.
 
 
 
@@ -40,12 +40,13 @@ Elements of the query component may contain characters outside the valid range. 
 | slpurn       | = "simpleledger:" address [ "?" params ]                     |
 | address      | = *slpaddr                                                   |
 | params       | = param [ "&" params ]                                       |
-| param        | = [chainid / amountparams / labelparam / messageparam / otherparam / reqparam] |
-| chainid      | = "chain=" *qchar                                            |
-| amountparams | = amountparam [ "&" amountparams ]                           |
-| amountparam  | = "amount_" *uniquechar "=" *digit [ "." *digit / tokenid / amountmode ]     |
+| param        | = [ amountparam / multiamounts / labelparam / messageparam / otherparam / reqparam ] |
+| amountparam  | = "amount=" *digit [ "." *digit ] [ tokenid / amountflags ]  |
+| multiamounts | = multiamount [ "&" multiamounts ]                           |
+| multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit / tokenid / amountflags ] |
 | tokenid      | = ";" 64*hexchar                                             |
-| amountmode   | = ";nftfromgroup"                                            |
+| amountflags  | = ";" amountflags [ ";" amountflags ]                        |
+| amountflag   | = [ "isgroup" / *qchar ]                                     |
 | labelparam   | = "label=" *qchar                                            |
 | messageparam | = "message=" *qchar                                          |
 | otherparam   | = qchar *qchar [ "=" *qchar ]                                |
@@ -56,12 +57,9 @@ Elements of the query component may contain characters outside the valid range. 
 
 ### Implementation Requirements
 
-1. Bitcoin Cash is the default blockchain using this URI scheme and the value "chain=BCH" is assumed if the `chainid` parameter is omitted. Even though Bitcoin Cash is the default blockchain it can still be included (i.e., `chain=BCH`).
-2. If the `tokenid` field is omitted within `amountparam`, an amount request for `chainid` currency shall be inferred.
-3. If the `tokenid` field is provided within `amountparam`, an amount request for `tokenid` token residing on the `chainid` blockchain shall be inferred.
-4. Only a single `amountparam` parameter can be provided for each `tokenid`, and only a single amount for the base currency shall be made.
-5. If `amountmode` is omitted from the `amountparam` parameter then the payment shall be made using the tokenid specified.  If ":nftfromgroup" is provided for `amountmode` then the payment request can satisfied using any valid NFT originating from the NFT group tokenid provided.  Read NFT group specification [here](https://github.com/simpleledger/slp-specifications/blob/master/NFT.md#extension-groupable-supply-limitable-nft-tokens-as-a-derivative-of-fungible-tokens) for more information.  In the future other `amountmode` options may be possible.
-6. The `*slpaddr` address format is specified [here](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md#slp-addr).
+1. Bitcoin Cash is the blockchain associated with the "simpleledger" URI scheme.
+2. If `amountflags` is omitted the payment shall be made using the tokenid specified.  However, if the `isgroup` amountflag option is provided then the payment request can satisfied using any valid NFT originating from the NFT group tokenid provided.  Read NFT group specification [here](https://github.com/simpleledger/slp-specifications/blob/master/NFT.md#extension-groupable-supply-limitable-nft-tokens-as-a-derivative-of-fungible-tokens) for more information.  In the future additional `amountflag` options may be possible.
+3. The character set requirements for the `*slpaddr` address format are specified [here](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md#slp-addr).
 
 ### Examples
 
@@ -72,7 +70,7 @@ Please see the BNF grammar above for the normative syntax.
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0`
 
 * **Address with name:**
-	* `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?label=Satoshi-Nakamoto`
+    * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?label=Satoshi-Nakamoto`
 
 * **Request 10.0001 XYZ tokens to "Satoshi-Nakamoto":**
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=20.3&amount_2=10.0001;<xyzTokenID>&label=Satoshi-Nakamoto`
@@ -83,8 +81,8 @@ Please see the BNF grammar above for the normative syntax.
 * **Request 50 BCH & 1 ABC token with message:**
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=50&amount_2=1;<abcTokenID>&label=Satoshi-Nakamoto&message=Donation%20for%20project%20xyz`
 
-* **Request any 1 NFT token from group XYZ (using "nftfromgroup"):**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=1&amount_2=1;<xyzGroupID>;nftfromgroup&label=Satoshi-Nakamoto`
+* **Request any 1 NFT token from group XYZ (using "isgroup"):**
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=1&amount_2=1;<xyzGroupID>;isgroup&label=Satoshi-Nakamoto`
 
 * **Some future version that has variables which are (currently) not understood and required and thus invalid:**
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999`
@@ -97,7 +95,7 @@ Please see the BNF grammar above for the normative syntax.
 ## Reference Implementations
 
 ### Clients
-None currently
+Electron Cash SLP - WIP
 
 ### Libraries
 None currently
