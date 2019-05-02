@@ -45,7 +45,7 @@ Elements of the query component may contain characters outside the valid range. 
 | multiamounts | = multiamount [ "&" multiamounts ]                           |
 | multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit / tokenid / amountflags ] |
 | tokenid      | = ";" 64*hexchar                                             |
-| amountflags  | = ";" amountflags [ ";" amountflags ]                        |
+| amountflags  | = ";" amountflag [ ";" amountflags ]                         |
 | amountflag   | = [ "isgroup" / *qchar ]                                     |
 | labelparam   | = "label=" *qchar                                            |
 | messageparam | = "message=" *qchar                                          |
