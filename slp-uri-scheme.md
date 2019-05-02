@@ -43,10 +43,10 @@ Elements of the query component may contain characters outside the valid range. 
 | param        | = [ amountparam / multiamounts / labelparam / messageparam / otherparam / reqparam ] |
 | amountparam  | = "amount=" *digit [ "." *digit ] [ tokenid / amountflags ]  |
 | multiamounts | = multiamount [ "&" multiamounts ]                           |
-| multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit / tokenid / amountflags ] |
-| tokenid      | = ";" 64*hexchar                                             |
-| amountflags  | = ";" amountflag [ ";" amountflags ]                         |
-| amountflag   | = [ "isgroup" / *qchar ]                                     |
+| multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit / tokenid ]   |
+| tokenid      | = ";" 64*hexchar [ ";" tokenflags ]                              |
+| tokenflags   | = tokenflag [ ";" tokenflags ]                           |
+| tokenflags   | = [ "isgroup" / *qchar ]                                     |
 | labelparam   | = "label=" *qchar                                            |
 | messageparam | = "message=" *qchar                                          |
 | otherparam   | = qchar *qchar [ "=" *qchar ]                                |
@@ -58,7 +58,7 @@ Elements of the query component may contain characters outside the valid range. 
 ### Implementation Requirements
 
 1. Bitcoin Cash is the blockchain associated with the "simpleledger" URI scheme.
-2. If `amountflags` is omitted the payment shall be made using the tokenid specified.  However, if the `isgroup` amountflag option is provided then the payment request can satisfied using any valid NFT originating from the NFT group tokenid provided.  Read NFT group specification [here](https://github.com/simpleledger/slp-specifications/blob/master/NFT.md#extension-groupable-supply-limitable-nft-tokens-as-a-derivative-of-fungible-tokens) for more information.  In the future additional `amountflag` options may be possible.
+2. If `tokenflags` is omitted the payment shall be made using the tokenid specified.  However, if the `isgroup` tokenflag option is provided then the payment request can satisfied using any valid NFT originating from the NFT group tokenid provided.  Read NFT group specification [here](https://github.com/simpleledger/slp-specifications/blob/master/NFT.md#extension-groupable-supply-limitable-nft-tokens-as-a-derivative-of-fungible-tokens) for more information.  In the future additional `tokenflag` options may be possible.
 3. The character set requirements for the `*slpaddr` address format are specified [here](https://github.com/simpleledger/slp-specifications/blob/master/slp-token-type-1.md#slp-addr).
 
 ### Examples
