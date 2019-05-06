@@ -4,8 +4,8 @@
 
 # URI Scheme Specificaton
 
-#### Version: 0.1
-#### Date published: TBD
+#### Version: 0.2
+#### Date published: 5-6-2019
 
 
 
@@ -44,8 +44,8 @@ Elements of the query component may contain characters outside the valid range. 
 | amountparam  | = "amount=" *digit [ "." *digit ] [ tokenid ]                |
 | multiamounts | = multiamount [ "&" multiamounts ]                           |
 | multiamount  | = "amount" *uniquechar "=" *digit [ "." *digit ] [ tokenid ] |
-| tokenid      | = ";" 64*hexchar [ ";" tokenflags ]                          |
-| tokenflags   | = tokenflag [ ";" tokenflags ]                               |
+| tokenid      | = "-" 64*hexchar [ "-" tokenflags ]                          |
+| tokenflags   | = tokenflag [ "-" tokenflags ]                               |
 | tokenflag    | = [ "isgroup" / *qchar ]                                     |
 | labelparam   | = "label=" *qchar                                            |
 | messageparam | = "message=" *qchar                                          |
@@ -73,16 +73,16 @@ Please see the BNF grammar above for the normative syntax.
     * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?label=Satoshi-Nakamoto`
 
 * **Request 10.0001 XYZ tokens to "Satoshi-Nakamoto":**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=20.3&amount_2=10.0001;<xyzTokenID>&label=Satoshi-Nakamoto`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount1=20.3&amount2=10.0001-<xyzTokenID>&label=Satoshi-Nakamoto`
 
 * **Request 20.30 BCH & 1000 XYZ tokens to "Satoshi-Nakamoto":**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=20.3&amount_2=1000;<xyzTokenID>&label=Satoshi-Nakamoto`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount1=20.3&amount2=1000-<xyzTokenID>&label=Satoshi-Nakamoto`
 
 * **Request 50 BCH & 1 ABC token with message:**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=50&amount_2=1;<abcTokenID>&label=Satoshi-Nakamoto&message=Donation%20for%20project%20xyz`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount1=50&amount2=1-<abcTokenID>&label=Satoshi-Nakamoto&message=Donation%20for%20project%20xyz`
 
 * **Request any 1 NFT token from group XYZ (using "isgroup"):**
-  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount_1=1&amount_2=1;<xyzGroupID>;isgroup&label=Satoshi-Nakamoto`
+  * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount1=1&amount2=1-<xyzGroupID>-isgroup&label=Satoshi-Nakamoto`
 
 * **Some future version that has variables which are (currently) not understood and required and thus invalid:**
   * `simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999`
