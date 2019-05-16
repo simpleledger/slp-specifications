@@ -2,7 +2,7 @@
 
 # Bitcoin Files Protocol Specification
 
-### Specification version: 0.3
+### Specification version: 0.4
 ### Date orginally published: September 21, 2018
 
 ### URI: [bitcoinfiles.com](bitcoinfiles.com)
@@ -47,7 +47,7 @@ It is recommended that an initial funding transaction be created (as shown in th
 1. **Data Chunk Order:** Data chunks shall be ordered in the order that the transactions are signed.  This means the first chunk of the file represents the first part of the file and is signed first.  The last data chunk of the file is signed last and may be placed within the final metadata transaction if there is sufficient room.
 
 2. **Metadata OP_RETURN Message:** The final signed transaction for a file upload must contain an OP_RETURN output message located at output index 0 (i.e., vout:0).  The required format for this final message is:
-   *  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x01> <chunk_count_int> <filename_no_extension_utf8*> <file_extension_utf8*> <file_byte_count_int*> <file_sha256_bytes*> <previous_file_version_sha256_bytes*> <file_uri_utf8*> <chunk_X_data_bytes*>`
+   *  `OP_RETURN <lokad_id_int = 'BFP\x00'> <bfp_msg_type = 0x01> <chunk_count_int> <filename_utf8*> <file_extension_utf8*> <file_byte_count_int*> <file_sha256_bytes*> <previous_file_version_sha256_bytes*> <file_uri_utf8*> <chunk_X_data_bytes*>`
    * If the file includes only 1 data chunk *AND* that data chunk can fit within the metadata transaction then only a single transaction is required for the upload.
    * If the file includes multiple data chunks a Data Chunk OP_RETURN transaction described below shall be used to facilitate uploading of the data chunks.
 
