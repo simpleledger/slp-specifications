@@ -55,8 +55,9 @@ The token document may be superceded any number of times.  The procedure for upd
 `token.json` must be:
 
 1. valid against the `schemas/token-document-v1.schema.json` valdation document
-2. uploaded to the Bitcoin Cash blockchain using the [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) with data stored on-chain, having `filename_utf8` set to `token.json`, `file_sha256_bytes` set to the valid hash of the uploaded content, and `previous_file_version_sha256_bytes` set to the valid hash of the previous token document being superceded.
+2. uploaded to the Bitcoin Cash blockchain using the [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md) with data stored on-chain, having `filename_utf8` set to `token.json`, `file_sha256_bytes` set to the valid hash of the `token.json` uploaded content, and `previous_file_sha256_bytes` set to the bitcoin files protocol location (i.e, the file's location is the BFP metadata transaction ID) of the previous token document that is being superceded.
 3. Uploaded the by one of the addresses listed in the `auth ` property of the the most recent `token.json` document
+4. The first attempt to update a token document will be considered valid, subsequent attempts to update the same document will be ignored and considered invalid.  If the same document is updated two or more times within the same block then canonical transaction ordering will be used to identify which was the first attempt to update.
 
 ### Trust & Certification
 

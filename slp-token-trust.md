@@ -15,7 +15,7 @@ Protecting SLP token users against scams and harmful token content can be achiev
 
 Votes can be cast only in favor of a token's legitamacy which can be revoked at any time.  Votes and revocations shall be sent with a small dust or tip amount to the token's genesis address so that they can be alerted of the change in certification status.  Each vote/revokation certificate should be specific to a token.json document, this way any updates to token.json will require a new vote certificate.  The vote for a previous token.json certificate is not required to be revoked.
 
-A vote or revocation exists in the form of a small OP_RETURN certificate containing pointer towards a `tokenId` and a `file_sha256_bytes` for a specific `token.json` document version. 
+A vote or vote revocation exists in the form of a small OP_RETURN certificate containing pointer towards a token ID (`tokenId`) and a bitcoin files protocol file ID (`BfpId_32bytes`) for a specific `token.json` document version.  Using bitcoin files ID instead of token document hash is more efficient 
 
 #### Vote Transaction Format
 | Index | Inputs                        | Output scriptPubKey ASM                                     | Output amount |
@@ -37,4 +37,3 @@ NOTES:
 1. Voter's input signature must use sighash flag `ALL`, `SINGLE`, `ALL|ANYONECANPAY`, or `SINGLE|ANYONECANPAY`.
 2. Any input script may be used however the first two elements of scriptSig must be a signature followed by the voter's pubkey.
 3. Voters wanting to use a multisig address can use key aggregation with Schnorr
-
