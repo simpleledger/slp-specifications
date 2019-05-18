@@ -19,7 +19,7 @@ A token can have arbitrary information attached using the `Document URI` field w
 
 ### Version 1 Schema
 
-The following pseudo schema provides the minimum format requirements for a token document to be considered valid. This schema is formalized in the `schemas/token-document-v1.schema.json` document.  
+The following pseudo schema provides the minimum format requirements for a token document to be considered valid. This schema is formalized in the `schemas/token-document-v1.schema.json` document.
 
 ```js
 {
@@ -28,10 +28,18 @@ The following pseudo schema provides the minimum format requirements for a token
     "auth": [ "simpleledger:..." ],     // (required) addresses allowed to replace this document
     "contact":                          // (required) contact info object
     {                              
-        "email": "",                    // (required) email for support
-        "phone": "",                    // (required) phone number for support
-        "url": "",                      // (required) url for additional token details
+        "email": "",                    // (optional) email for support
+        "phone": "",                    // (optional) phone number for support
+        "url": "",                      // (required) url with information about the token issuer
+    },
+    "purpose":                          // (required) must have purpose uploaded in either 'desc' or 'url'
+    {
+        "desc": "",                     // (optional) on-chain text description of purpose and disclaimers
+        "url": "",                      // (optional) url location to a file containing purpose and disclaimers (must use 'url_hash' field)
+        "url_hash": ""                  // (optional) off-chain 
     }
+    "purpose_uri": "",                  // (required) url pointer to location of a file containing token's purpose and disclaimers
+    "purpose_sha256": "",               // (required) sha256 hash of file at 'desc_uri'
     "...": {                            // (optional) any additional app specific data
         "..."                         
     }
