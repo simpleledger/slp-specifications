@@ -49,6 +49,7 @@ The following pseudo schema provides the minimum format requirements for a token
 #### File Formatting requirements
 1) File text must be encoded using utf8.
 2) File may be compressed using the [lzutf8](https://github.com/rotemdan/lzutf8.js) algorithm, in this case a `filename_utf8` shall be `token.json.lzutf8` and `fileext_utf8` shall be `json.lzutf8` within the BFP metadata.
+3) SVG icon files shall be no larger than _____ KB.
 
 ### Initial Publishing
 
