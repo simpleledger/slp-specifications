@@ -37,11 +37,14 @@ Payments are considered valid if the submitted transaction has the outputs requi
 
 #### Example OP_RETURN Script Validation
 
-REQUESTED SCRIPT (ASM): ``OP_RETURN 534c5000 OP_1 53454e44 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 000000000000000a 0000000000000014 000000000000000a``
+REQUESTED SCRIPT (ASM): 
+``OP_RETURN 534c5000 OP_1 53454e44 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 000000000000000a 0000000000000014 000000000000000a``
 
-VALID SCRIPT (ASM) - APPENDED CHANGE OUTPUT: ``OP_RETURN 534c5000 OP_1 53454e44 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 000000000000000a 0000000000000014 000000000000000a 00000002540be400``
+VALID SCRIPT (ASM) - APPENDED CHANGE OUTPUT: 
+``OP_RETURN 534c5000 OP_1 53454e44 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 000000000000000a 0000000000000014 000000000000000a 00000002540be400``
 
-INVALID SCRIPT (ASM) - MISSING REQUIRED OUTPUT: ``OP_RETURN 534c5000 OP_1 53454e44 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 000000000000000a 0000000000000014``
+INVALID SCRIPT (ASM) - MISSING REQUIRED OUTPUT: 
+``OP_RETURN 534c5000 OP_1 53454e44 4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf 000000000000000a 0000000000000014``
 
 ### URI Specification
 
@@ -49,9 +52,11 @@ The URI scheme follows [BIP 72](https://github.com/bitcoin/bips/blob/master/bip-
 
 #### Examples
 
-A backwards-compatible request: ``simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount1=10.0001-<xyzTokenID>&label=Satoshi-Nakamoto&r=https://merchant.com/pay/3D2a8628fc2fbe``
+A backwards-compatible request: 
+``simpleledger:qqmtw4c35mpv5rcjnnsrskpxvzajyq3f9ygldn8fj0?amount1=10.0001-<xyzTokenID>&label=Satoshi-Nakamoto&r=https://merchant.com/pay/3D2a8628fc2fbe``
 
-Non-backwards-compatible equivalent: ``simpleledger:?r=https://merchant.com/pay/3D2a8628fc2fbe``
+Non-backwards-compatible equivalent: 
+``simpleledger:?r=https://merchant.com/pay/3D2a8628fc2fbe``
 
 ### MIME Types
 
