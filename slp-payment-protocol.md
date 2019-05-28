@@ -48,7 +48,7 @@ INVALID SCRIPT (ASM) - MISSING REQUIRED OUTPUT:</br>
 
 ### URI Specification
 
-The URI scheme follows [BIP 72](https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki), and the [Simple Ledger Protocol URI Scheme Specification](https://github.com/simpleledger/slp-specifications/blob/token-documents/slp-uri-scheme.md) except that the URI prefix is `simpleledger`.
+The URI scheme follows [BIP 72](https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki), and the [Simple Ledger Protocol URI Scheme Specification](https://github.com/simpleledger/slp-specifications/blob/token-documents/slp-uri-scheme.md).
 
 #### Examples
 
