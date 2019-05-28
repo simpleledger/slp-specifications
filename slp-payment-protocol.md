@@ -72,9 +72,9 @@ The MIME (RFC 2046) Media Types follow the basic specification described in [BIP
 
 A web server generating a PaymentRequest message to initiate the payment protocol would precede the binary message data with the following headers:
 
-``Content-Type: application/bitcoin-paymentrequest
-Accept: application/simpleledger-payment
-Content-Transfer-Encoding: binary``
+``Content-Type: application/simpleledger-paymentrequest``</br>
+``Accept: application/simpleledger-payment``</br>
+``Content-Transfer-Encoding: binary``</br>
 
 ## Reference Implementations
 
