@@ -290,7 +290,7 @@ The genesis transaction includes an initial minting of `initial_token_mint_quant
    OP_RETURN<br/>
    &lt;lokad_id: 'SLP\x00'&gt; (4 bytes, ascii)<sup>1</sup><br/>
    &lt;token_type: 1&gt; (1 to 2 byte integer)<br/>
-   &lt;transaction_type: 'GENESIS'&gt; (4 bytes, ascii)<br/>
+   &lt;transaction_type: 'GENESIS'&gt; (7 bytes, ascii)<br/>
    &lt;token_ticker&gt; (0 to ∞ bytes, suggested utf-8)<br/>
    &lt;token_name&gt; (0 to ∞ bytes, suggested utf-8)<br/>
    &lt;token_document_url&gt; (0 to ∞ bytes, suggested ascii)<br/>
