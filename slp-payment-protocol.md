@@ -3,7 +3,7 @@
 # Simple Ledger Payment Protocol
 
 #### Version: 0.1
-#### Date published: TBD
+#### Date published: June 11, 2019
 
 ## Purpose
 
