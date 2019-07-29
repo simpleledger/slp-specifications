@@ -276,7 +276,7 @@ The genesis transaction includes an initial minting of `initial_token_mint_quant
 
 **Transaction inputs**: Any number of inputs or content of inputs, in any order.
 
-**Transacation outputs**:
+**Transaction outputs**:
 <table>
 <tr>
   <td><b>v<sub>out</sub></b></td>
