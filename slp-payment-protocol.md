@@ -79,7 +79,7 @@ A web server generating a PaymentRequest message to initiate the payment protoco
 ## Reference Implementations
 
 ### Clients
-None currently
+[Badger Wallet](https://github.com/bitcoin-com/badger)
 
 ### Libraries
 None currently
