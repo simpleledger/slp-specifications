@@ -505,11 +505,172 @@ https://blockchair.com/bitcoin-cash/transaction/550d19eb820e616a54b8a73372c4420b
 
 SCRIPT: ``6a04534c500001010747454e45534953045553445423546574686572204c74642e20555320646f6c6c6172206261636b656420746f6b656e734168747470733a2f2f7465746865722e746f2f77702d636f6e74656e742f75706c6f6164732f323031362f30362f546574686572576869746550617065722e70646620db4451f11eda33950670aaf59e704da90117ff7057283b032cfaec77793139160108010208002386f26fc10000``
 
+SCRIPT BROKEN DOWN:
+<table>
+ <tr>
+  <td>6a</td>
+  <td>OP_RETURN</td>
+ <tr>  
+ <tr>
+  <td>04</td>
+  <td>length of lokad_id field (4 bytes)</td>
+ <tr>
+ <tr>
+  <td>534c5000</td>
+  <td>SLP\x00</td>
+ <tr>
+ <tr>
+  <td>01</td>
+  <td>length of token_type (1 byte)</td>
+ <tr>
+ <tr>
+  <td>01</td>
+  <td>token_type (1)</td>
+ <tr>
+ <tr>
+  <td>07</td>
+  <td>number of bytes in transaction_type (7 bytes)</td>
+ <tr>
+ <tr>
+  <td>47454e45534953</td>
+  <td>'GENESIS'</td>
+ <tr>
+ <tr>
+  <td>04</td>
+  <td>length of token_ticker (4 bytes)</td>
+ <tr>
+ <tr>
+  <td>55534454</td>
+  <td>'USDT'</td>
+ <tr>
+ <tr>
+  <td>23</td>
+  <td>length of token_name (35 bytes)</td>
+ <tr>
+ <tr>
+  <td>
+   546574686572204c74642e20555320646f6c6c61722062616<br/>
+   36b656420746f6b656e73
+  </td>
+  <td>'Tether Ltd. US dollar backed tokens'</td>
+ <tr>
+ <tr>
+  <td>47454e45534953</td>
+  <td>'GENESIS'</td>
+ <tr>
+ <tr>
+  <td>41</td>
+  <td>length of token_document_url (65 bytes)</td>
+ <tr>
+ <tr>
+  <td>
+   68747470733a2f2f7465746865722e746f2f77702d636f6e7<br/>
+   4656e742f75706c6f6164732f323031362f30362f54657468<br/>
+   6572576869746550617065722e706466
+  </td>
+  <td>'https://tether.to/wp-content/uploads/2016/06/TetherWhitePaper.pdf'</td>
+ <tr>
+ <tr>
+  <td>20</td>
+  <td>length of token_document_hash (32 bytes)</td>
+ <tr>
+ <tr>
+  <td>
+   db4451f11eda33950670aaf59e704da90117ff7057283b032<br/>
+   cfaec7779313916
+  </td>
+  <td>token_document_hash</td>
+ <tr>
+ <tr>
+  <td>01</td>
+  <td>length for decimals (1 byte)</td>
+ <tr>
+ <tr>
+  <td>08</td>
+  <td>decimals (8)</td>
+ <tr>
+ <tr>
+  <td>01</td>
+  <td>length for mint_baton_vout (1 byte)</td>
+ <tr>
+ <tr>
+  <td>02</td>
+  <td>mint_baton_vout (2)</td>
+ <tr>
+ <tr>
+  <td>08</td>
+  <td>length of initial_token_mint_quantity (8 bytes)</td>
+ <tr>
+ <tr>
+  <td>002386f26fc10000</td>
+  <td>initial_token_mint_quantity (10,000,000,000,000,000)</td>
+ <tr>
+</table>
+
 **MINT Transaction**
 
 https://blockchair.com/bitcoin-cash/transaction/b36b0c7485ad569b98cc9b9614dc68a5208495f22ec3b00effcf963b135a5215
 
 SCRIPT: ``6a04534c50000101044d494e5420550d19eb820e616a54b8a73372c4420b5a0567d8dc00f613b71c5234dc884b35010208002386f26fc10000``
+
+SCRIPT BROKEN DOWN:
+<table>
+ <tr>
+  <td>6a</td>
+  <td>OP_RETURN</td>
+ </tr>
+ <tr>
+  <td>04</td>
+  <td>Length of lokad_id field (4 bytes)</td>
+ </tr>
+ <tr>
+  <td>534c5000</td>
+  <td>SLP\x00</td>
+ </tr>
+ <tr>
+  <td>01</td>
+  <td>length of token_type (1 byte)</td>
+ </tr>
+ <tr>
+  <td>01</td>
+  <td>token_type (1)</td>
+ </tr>
+ <tr>
+  <td>04</td>
+  <td>length of transaction_type field (4 bytes)</td>
+ </tr>
+ <tr>
+  <td>4d494e54</td>
+  <td>'MINT'</td>
+ </tr>
+ <tr>
+  <td>20</td>
+  <td>length of token_id (32 bytes)</td>
+ </tr>
+ <tr>
+  <td>
+   550d19eb820e616a54b8a73372c4420b5a0567d8dc00f613b<br/>
+   71c5234dc884b35
+  </td>
+  <td>token_id</td>
+ </tr>
+ <tr>
+  <td>01</td>
+  <td>length of mint_baton_vout (1 byte)</td>
+ </tr>
+ <tr>
+  <td>02</td>
+  <td>mint_baton_vout (2)</td>
+ </tr>
+ <tr>
+  <td>08</td>
+  <td>length of additional_token_quantity (8 bytes)</td>
+ </tr>
+ <tr>
+  <td>002386f26fc10000</td>
+  <td>additional_token_quantity (10,000,000,000,000,000)</td>
+ </tr>
+</table>
 
 **SEND Transaction**
 
