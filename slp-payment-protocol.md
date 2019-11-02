@@ -79,7 +79,8 @@ A web server generating a PaymentRequest message to initiate the payment protoco
 ## Reference Implementations
 
 ### Clients
-[Badger Wallet](https://github.com/bitcoin-com/badger)
+[Badger Extension](https://github.com/bitcoin-com/badger)
+[Badger Mobile](https://github.com/bitcoin-com/badger-mobile)
 
 ### Libraries
 None currently
