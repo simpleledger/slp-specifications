@@ -107,7 +107,7 @@ In certain cases, the sender of a transaction may not want the post office to br
 }
 ```
 
-If no JSON Merchant Data object meeting the above specification is included with the payment, the postage paid transaxtion will be broadcast to the Bitcoin Cash network by the post office.
+If no JSON Merchant Data object meeting the above specification is included with the payment, the postage paid transaction will be broadcast to the Bitcoin Cash network by the post office.
 
 
 ### Stamp Inputs
@@ -125,20 +125,20 @@ BEFORE POSTAGE:</br>
 
 | INDEX | INPUT | OUTPUT |
 | ------------ | ------------ | ------------------------------------------|
-| 0 | **(70 SLP tokens)** 546 Satoshis  | **SLP OP_RETURN** |
-| 1 | | **(20 SLP tokens)** 546 Satoshis |
-| 2 | | **(30 SLP tokens)** 546 Satoshis  *paying postage* |
-| 3 | | **(20 SLP tokens)** 546 Satoshis  *change* |
+| 0 | **(70 SLP tokens)** 546 satoshis  | **SLP OP_RETURN** |
+| 1 | | **(20 SLP tokens)** 546 satoshis |
+| 2 | | **(30 SLP tokens)** 546 satoshis  *paying postage* |
+| 3 | | **(20 SLP tokens)** 546 satoshis  *change* |
 
 AFTER POSTAGE:</br>
 
 | INDEX | INPUT | OUTPUT |
 | ------------ | ------------ | ------------------------------------------|
-| 0 | **(70 SLP tokens)** 546 Satoshis | **SLP OP_RETURN** |
-| 1 | 546 Satoshis *stamp* | **(20 SLP tokens)** 546 Satoshis |
-| 2 | 546 Satoshis *stamp* | **(30 SLP tokens)** 546 Satoshis  *paying postage* |
-| 3 | 546 Satoshis *stamp* | **(20 SLP tokens)** 546 Satoshis  *change* |
-| 4 | 546 Satoshis *stamp* | |
+| 0 | **(70 SLP tokens)** 546 satoshis | **SLP OP_RETURN** |
+| 1 | 546 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis |
+| 2 | 546 satoshis *stamp* | **(30 SLP tokens)** 546 satoshis  *paying postage* |
+| 3 | 546 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis  *change* |
+| 4 | 546 satoshis *stamp* | |
 
 
 ### MIME Types
