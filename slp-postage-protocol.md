@@ -3,7 +3,7 @@
 # Simple Ledger Postage Protocol
 
 #### Version: 0.1
-#### Date published: November 1, 2019
+#### Date published: November 3, 2019
 
 ## Purpose
 
@@ -54,7 +54,7 @@ The response will be a JSON format payload.
 {
    "address":"simpleledger:qrxj0mftnsrl63uqwn2jcsxvwymgxm7sev7dyx7hrr",
    "weight":365,
-   "ttl":30,
+   "transactionttl":30,
    "stamps":[
       {
          "name":"Spice Token",
@@ -107,7 +107,9 @@ In certain cases, the sender of a transaction may not want the post office to br
 }
 ```
 
-If no JSON Merchant Data object meeting the above specification is included with the payment, the postage paid transaction will be broadcast to the Bitcoin Cash network by the post office.
+If the raw transaction hex is returned to the sender, the post office will "quarantine" the UTXOs used as stamp inputs, making them unspendable for the time period specified in the `transactionttl` of the Postage Rate Request.
+
+If a JSON Merchant Data object meeting the above specification is not included with the Payment, the postage paid transaction will be broadcast to the Bitcoin Cash network by the post office.
 
 
 ### Stamp Inputs
@@ -117,7 +119,7 @@ When the sender's transaction is determined to be valid, the post office appends
 1. The sum of the appended outputs must be sufficient to make the transaction valid and cover the minimum required miner fee.
 2. All inputs will be signed with the SIGHASH_ALL signature hash type. The SIGHASH_ANYONECANPAY signature hash type will not be used on stamp inputs.
 
-Because an additional change output cannot be added to the transaction, due to the sender signing inputs with SIGHASH_ALL, it is most efficient for post office providers to have an available stock of stamp UTXOs, of one or more standardized "weights," with the smallest UTXO value corresponding to the weight amount defined in the postage rate request.
+Because an additional change output cannot be added to the transaction, due to the sender signing inputs with SIGHASH_ALL, it is most efficient for post office providers to have an available stock of stamp UTXOs, of one or more standardized "weights," with the smallest UTXO value corresponding to the weight amount defined in the Postage Rate Request.
 
 #### Example Transaction
 
@@ -161,7 +163,7 @@ A wallet client generating a Payment message would precede the binary message da
 
 ### Common Errors
 
-| Http Status Code | Response | Cause |
+| HTTP Status Code | Response | Cause |
 |---|---|---|
 | 400 | Unsupported Content-Type for payment | Your Content-Type header was not valid |
 | 400 | Invalid Payment | The payment is would be invalid even if postage was added |
