@@ -122,21 +122,21 @@ Because an additional change output cannot be added to the transaction, due to t
 #### Example Transaction
 
 BEFORE POSTAGE:</br>
-| INDEX | INPUT | OUTPUT                                  |
+| INDEX | INPUT | OUTPUT |
 | ------------ | ------------ | ------------------------------------------|
-| 0 | (70 SLP tokens) 546 Satoshis  | SLP OP_RETURN         |
-| 1 |      | (20 SLP tokens) 546 Satoshis   |
-| 2 |      | (30 SLP tokens) 546 Satoshis  *paying postage* |
-| 3 |      | (20 SLP tokens) 546 Satoshis  *change* |
+| 0 | (70 SLP tokens) 546 Satoshis  | SLP OP_RETURN |
+| 1 | - | (20 SLP tokens) 546 Satoshis |
+| 2 | - | (30 SLP tokens) 546 Satoshis  *paying postage* |
+| 3 | - | (20 SLP tokens) 546 Satoshis  *change* |
 
 AFTER POSTAGE:</br>
-| INDEX | INPUT | OUTPUT                                  |
+| INDEX | INPUT | OUTPUT |
 | ------------ | ------------ | ------------------------------------------|
-| 0 | (70 SLP tokens) 546 Satoshis  | SLP OP_RETURN         |
-| 1 | 546 Satoshis *stamp* | (20 SLP tokens) 546 Satoshis   |
+| 0 | (70 SLP tokens) 546 Satoshis | SLP OP_RETURN |
+| 1 | 546 Satoshis *stamp* | (20 SLP tokens) 546 Satoshis |
 | 2 | 546 Satoshis *stamp* | (30 SLP tokens) 546 Satoshis  *paying postage* |
 | 3 | 546 Satoshis *stamp* | (20 SLP tokens) 546 Satoshis  *change* |
-| 4 | 546 Satoshis *stamp* | |
+| 4 | 546 Satoshis *stamp* | - |
 
 
 ### MIME Types
