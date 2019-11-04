@@ -39,6 +39,7 @@ A GET request should be made to the Postage Protocol url.
 The response will be a JSON format payload.
 
 #### Response Body
+* `version` - The version of the Postage Rate Request specification. This document defines version 1
 * `address` - The address to which postage payment must be made
 * `weight` - The number of satoshis represented by each postage unit (stamps)
 * `transactionttl` - The time (in seconds) that utxos added as stamp inputs will be guaranteed valid in the case that the sender does not want the post office to broadcast the transaction to the Bitcoin Cash network
@@ -52,6 +53,7 @@ The response will be a JSON format payload.
 #### Response Body Example
 ```
 {
+   "version":1,
    "address":"simpleledger:qrxj0mftnsrl63uqwn2jcsxvwymgxm7sev7dyx7hrr",
    "weight":365,
    "transactionttl":30,
@@ -78,6 +80,46 @@ The response will be a JSON format payload.
          "rate":1
       }
    ]
+}
+```
+
+#### Integration With Simple Ledger Payment Protocol
+
+A merchant utilizing [Simple Ledger Payment Protocol](https://github.com/simpleledger/slp-specifications/blob/master/slp-payment-protocol.md) to process payments can, optionally, act as a post office for buyers. In such a case, the Payment may be sent to the payment protocol server with an additional SLP output paying for postage. The merchant's server will add the required satoshis, after validating the payment and before broadcasting the transaction to the Bitcoin Cash network. A merchant wishing to offer this service will include the Postage Rate object in the Payment Request sent to the buyer. The Postage Rate object will be contained in the `postage` property of the [JSON Merchant Data](https://github.com/jeton-tech/payment-protocol-extensions/blob/master/json-merchant-data.md) of the Payment Request.
+
+#### Payment Request JSON Merchant Data Object Example
+```
+{
+   "postage":
+      {
+         "version":1,
+         "address":"simpleledger:qrxj0mftnsrl63uqwn2jcsxvwymgxm7sev7dyx7hrr",
+         "weight":365,
+         "transactionttl":30,
+         "stamps":[
+            {
+               "name":"Spice Token",
+               "symbol":"SPICE",
+               "tokenId":"4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf",
+               "decimals":8,
+               "rate":727418066
+            },
+            {
+               "name":"Honest Coin",
+               "symbol":"USDH",
+               "tokenId":"c4b0d62156b3fa5c8f3436079b5394f7edc1bef5dc1cd2f9d0c4d46f82cca479",
+               "decimals":2,
+               "rate":1
+            },
+            {
+               "name":"AnyPay Gold",
+               "symbol":"GOLD",
+               "tokenId":"8e635bcd1b97ad565b2fdf6b642e760762a386fe4df9e4961f2c13629221914f",
+               "decimals":3,
+               "rate":1
+            }
+         ]
+      }
 }
 ```
 
@@ -123,7 +165,7 @@ Because an additional change output cannot be added to the transaction, due to t
 
 #### Example Transaction
 
-BEFORE POSTAGE:</br>
+BEFORE POSTAGE (Single SLP Input):</br>
 
 | INDEX | INPUT | OUTPUT |
 | ------------ | ------------ | ------------------------------------------|
@@ -132,7 +174,7 @@ BEFORE POSTAGE:</br>
 | 2 | | **(30 SLP tokens)** 546 satoshis  *paying postage* |
 | 3 | | **(20 SLP tokens)** 546 satoshis  *change* |
 
-AFTER POSTAGE:</br>
+AFTER POSTAGE (Single SLP Input):</br>
 
 | INDEX | INPUT | OUTPUT |
 | ------------ | ------------ | ------------------------------------------|
@@ -141,6 +183,34 @@ AFTER POSTAGE:</br>
 | 2 | 546 satoshis *stamp* | **(30 SLP tokens)** 546 satoshis  *paying postage* |
 | 3 | 546 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis  *change* |
 | 4 | 546 satoshis *stamp* | |
+
+BEFORE POSTAGE (Multiple SLP Inputs):</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **(10 SLP tokens)** 546 satoshis | **SLP OP_RETURN** |
+| 1 | **(35 SLP tokens)** 546 satoshis | **(20 SLP tokens)** 546 satoshis |
+| 2 | **(25 SLP tokens)** 546 satoshis | **(30 SLP tokens)** 546 satoshis  *paying postage* |
+| 3 | | **(20 SLP tokens)** 546 satoshis  *change* |
+
+AFTER POSTAGE (Multiple SLP Inputs):</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **(10 SLP tokens)** 546 satoshis | **SLP OP_RETURN** |
+| 1 | **(35 SLP tokens)** 546 satoshis | **(20 SLP tokens)** 546 satoshis |
+| 2 | **(25 SLP tokens)** 546 satoshis | **(30 SLP tokens)** 546 satoshis  *paying postage* |
+| 3 | 546 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis  *change* |
+| 4 | 546 satoshis *stamp* | |
+
+AFTER POSTAGE (Multiple SLP Inputs / Varying Stamp Weights):</br>
+
+| INDEX | INPUT | OUTPUT |
+| ------------ | ------------ | ------------------------------------------|
+| 0 | **(10 SLP tokens)** 546 satoshis | **SLP OP_RETURN** |
+| 1 | **(35 SLP tokens)** 546 satoshis | **(20 SLP tokens)** 546 satoshis |
+| 2 | **(25 SLP tokens)** 546 satoshis | **(30 SLP tokens)** 546 satoshis  *paying postage* |
+| 3 | 910 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis  *change* |
 
 
 ### MIME Types
@@ -172,6 +242,14 @@ A wallet client generating a Payment message would precede the binary message da
 | 400 | Insufficient postage paid | The amount paid to the post office address is insufficient to cover postage |
 | 400 | Stamps currently unavailable. In need of refill | The post office has insufficient stamp UTXOs available. Please inform post office support |
 | 500 | Error | An error has occurred on the post office server |
+
+
+### Notes On Privacy And Censorship
+
+In a case where a post office server cannot determine the nature or source of a transaction, the sender's privacy is maintained. There is also little incentive for a post office to refuse any given transaction. However, in the case where a post office determines that a transaction benefits a (business) competitor, they may perceive greater benefit in not adding postage and refusing the transaction than would be received from the revenue gained by providing postage. To follow are some optional, but beneficial practices wallets can follow to keep incentives aligned between sender and post office.
+
+1. Non-reuse of addresses by senders and third parties such as payment protocol servers. This prevents potential refusal of transactions based on benefit to business competitors.
+2. Non-inclusion of [JSON Merchant Data](https://github.com/jeton-tech/payment-protocol-extensions/blob/master/json-merchant-data.md) from [Simple Ledger Payment Protocol](https://github.com/simpleledger/slp-specifications/blob/master/slp-payment-protocol.md) requests being fulfilled by a particular transaction. Although it may be simpler to include this data and merely append the `broadcastRawHex` property, this potentially reveals private information about the buyer and/or merchant. It should be assumed that a post office will retain data about its transactions, and inclusion of such sensitive information represents a risk.
 
 
 ### Notes On Transaction Malleability
