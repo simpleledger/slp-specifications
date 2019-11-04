@@ -210,7 +210,7 @@ AFTER POSTAGE (Multiple SLP Inputs / Varying Stamp Weights):</br>
 | 0 | **(10 SLP tokens)** 546 satoshis | **SLP OP_RETURN** |
 | 1 | **(35 SLP tokens)** 546 satoshis | **(20 SLP tokens)** 546 satoshis |
 | 2 | **(25 SLP tokens)** 546 satoshis | **(30 SLP tokens)** 546 satoshis  *paying postage* |
-| 3 | 910 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis  *change* |
+| 3 | 911 satoshis *stamp* | **(20 SLP tokens)** 546 satoshis  *change* |
 
 
 ### MIME Types
