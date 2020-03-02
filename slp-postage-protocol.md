@@ -46,7 +46,7 @@ The response will be a JSON format payload.
 * `stamps` - An array of stamp objects, representing the tokens supported by the post office and the rate per stamp
     * `name` - The human readable name of the SLP token
     * `symbol` - The ticker symbol of the token
-    * `tokenId` or `groupId` - The token ID hash for the token, or the group ID for a set of tokens (e.g., for NFT1)
+    * `tokenId` or `groupId` - The token ID hash for the token, or the group ID for a set of tokens (e.g., for NFT1). If `tokenId` and `groupId` are both provided then `groupId` shall be ignored.  The `rate` associated with a specified group ID should be set to 0 since NFTs only have a quantity of 1 and SLP currently only allows the transfer of a single token ID at a time.
     * `decimals` - The number of decimal places for the token
     * `rate` - The rate in base units (before factoring for `decimals`)
 
