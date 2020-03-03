@@ -2,7 +2,7 @@
 
 # Simple Ledger Postage Protocol
 
-#### Version: 0.1
+#### Version: 0.2
 #### Date published: November 3, 2019
 
 ## Purpose
@@ -47,6 +47,7 @@ The response will be a JSON format payload.
     * `name` - The human readable name of the SLP token
     * `symbol` - The ticker symbol of the token
     * `tokenId` - The token ID hash for the token
+    * `groupId` - The token ID hash associated with an [NFT1 group](./slp-nft-1.md). If `tokenId` and `groupId` fields are both provided `groupId` shall be ignored.  The `rate` associated with a specified group ID should be set to 0 since NFTs only have a quantity of 1 and SLP currently only allows the transfer of a single token ID at a time.
     * `decimals` - The number of decimal places for the token
     * `rate` - The rate in base units (before factoring for `decimals`)
 
@@ -64,6 +65,13 @@ The response will be a JSON format payload.
          "tokenId":"4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf",
          "decimals":8,
          "rate":727418066
+      },
+      {
+         "name": "DND Swords and Shields",
+         "symbol": "DND",
+         "groupId": "c01213b295920af4ca428212442817bb6a7b231aefd3f4b79c40fd3271cd5ea3",
+         "decimals": 0,
+         "rate": 0
       },
       {
          "name":"Honest Coin",
@@ -103,6 +111,13 @@ A merchant utilizing [Simple Ledger Payment Protocol](https://github.com/simplel
                "tokenId":"4de69e374a8ed21cbddd47f2338cc0f479dc58daa2bbe11cd604ca488eca0ddf",
                "decimals":8,
                "rate":727418066
+            },
+            {
+               "name": "DND Swords and Shields",
+               "symbol": "DND",
+               "groupId": "c01213b295920af4ca428212442817bb6a7b231aefd3f4b79c40fd3271cd5ea3",
+               "decimals": 0,
+               "rate": 0
             },
             {
                "name":"Honest Coin",
