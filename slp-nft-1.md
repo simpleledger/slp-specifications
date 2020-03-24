@@ -56,6 +56,6 @@ Wallets must ensure that NFT1 tokens are spent using the same Token Type field. 
 
 3. NFT1 child tokens can have different names, tickers, document URI, and document hashes from their respective NFT1 group minting token.  It will be up to the individual wallets to determine how to best present this information to its users.
 
-4. NFT1 group token GENESIS/MINT GUIs should make it clear that the quantity being minted is associated with the maximum number of NFT1 children to be minted.  This quantity can is not the maximum if the minting baton is used to expand the minting supply.
+4. NFT1 group token GENESIS/MINT GUIs should make it clear that the quantity to be minted is associated with the maximum number of NFT1 children that can be created.
 
 5. NFT1 group token GENESIS/MINT GUIs should have the decimals field disabled and set to 0 by default, even though this is not a strict requirement of the protocol.
