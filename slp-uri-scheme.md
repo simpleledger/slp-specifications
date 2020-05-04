@@ -95,7 +95,9 @@ Please see the BNF grammar above for the normative syntax.
 ## Reference Implementations
 
 ### Clients
-Electron Cash SLP - WIP
+
+* Electron Cash SLP
+* Badger
 
 ### Libraries
-None currently
+* SLPJS [Utils.parseSlpUri()](https://github.com/simpleledger/slpjs/blob/master/lib/utils.ts#L166)
