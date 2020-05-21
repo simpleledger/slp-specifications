@@ -79,8 +79,8 @@ A web server generating a PaymentRequest message to initiate the payment protoco
 ## Reference Implementations
 
 ### Clients
-[Badger Extension](https://github.com/bitcoin-com/badger)
+[Badger Extension](https://github.com/bitcoin-com/badger)<br>
 [Badger Mobile](https://github.com/bitcoin-com/badger-mobile)
 
 ### Libraries
-None currently
+[bitcoincashj](https://github.com/pokkst/bitcoincashj/tree/master/core/src/main/java/org/bitcoinj/protocols/payments/slp)
