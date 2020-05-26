@@ -8,12 +8,13 @@
 
 ## Introduction
 
-SLP Chat is a decentralized application (d-app) for participating in peer-to-peer group chat rooms with end-to-end encryption.  The application is open source and is designed in a way to permit interoperation with other implementations without requiring dependence on third-party services.  Chat room users can restore their chat group history by simply restoring their 12-word mnemonic seed phrase as long as one other group member is online to share chat history.
+SLP Chat is a decentralized application (d-app) for participating in peer-to-peer group chat rooms with end-to-end encryption and message notifications hardended by bitcoin transactions.  The application is open source and is designed in a way to permit interoperation with other implementations without requiring dependence on third-party services.  Chat room users can restore their chat group history by simply restoring their 12-word mnemonic seed phrase as long as one other group member is online to share chat history.
 
 The unique and highly motivating features this application will provide include:
 
 * group chat rooms with end-to-end encryption
-* native tipping with SLP tokens
+* high assurance message delivery and read receipt confirmations guarenteed by bitcoin transactions
+* native bitcoin and SLP token tipping
 * integrated workflows for interacting with smart contracts with chat group participants
 
 Group chat rooms are easy to setup and only require issuance of an [NFT1 Group](https://slp.dev/specs/slp-nft-1/) token by a chat room administrator, and users are added to the chat group be creating of NFTs from the NFT1 group which are sent to the chat room users.  The public key for each chat room member is embedded in the NFT genesis transaction and is used as the peer's identity in the peer-to-peer network and end-to-end message encryption.
@@ -38,7 +39,7 @@ Peer-to-peer connections between chat room users in the browser is accomplished 
 
 Both SLPDB and the WebRTC services can be configured by the chat room administrator and are not dependent on a third-party.  Most group admins would likely just leverage public WebRTC-star and SLPDB servers.
 
-
+Some situations do not allow a reliable connection via WebRTC.  Unreliable webRTC performance has been found to occur when a user is using a VPN, which is a basic requirement for many users.  Also offline users will never receive webRTC notifications since they are not not persisted to a data store.  Therefore, in order to provide high assurance for message notifications user message hashes will be published as a bitcoin transaction on the Bitcoin Cash blockchain as a payload as part of a Bitcoin Files Protocol transaction.
 
 ## SLP Token Data Scheme
 
@@ -52,13 +53,17 @@ New chat groups can be publicly listed as a known chat group ID by including the
 
 ## IPFS Data Scheme
 
-Users communicate with peers in real-time using libp2p pubsub.  There are currently only three types of messages sent via pubsub:
+Users communicate with peers in real-time using libp2p pubsub for all messaging.  Message types related to new message notifications and read receipts require high assurance, and so they need to also be published as bitcoin transactions using [Bitcoin Files Protocol](https://github.com/simpleledger/slp-specifications/blob/master/bitcoinfiles.md). 
 
-* `GROUP_SEND` - Used for sending a new group messages to connected peers
-* `NAME_REQUEST` - Used for requesting the current "myIpns" directory CID for a particular peerId
-* `NAME_RESPONSE` - Used for responding with the best known "myIpns" directory CID for a particular peerId
+There are currently only three types of messages sent via pubsub:
 
-Additionally, users store and pin their own messages on a locally running IPFS node.  In the reference SLP chat application there is an embedded IPFS node running within the javascript web application, and all of the data is stored within an IndexedDB and local storage.  The directory structure for the files stored by each user is illustrated below.  
+* `GROUP_SEND` - Used for sending a new group messages to connected peers (requires initial BFP transaction, then pubsub w/ topic=groupid)
+* `NAME_REQUEST` - Used for requesting the current "myIpns" directory CID for a particular peerId (pubsub only w/ topic=peerid)
+* `NAME_RESPONSE` - Used for responding with the best known "myIpns" directory CID for a particular peerId (pubsub only w/ topic=peerid)
+* `NAME_UPDATE` - Used for updating all subscribing peers with own name CID (pubsub only w/ topic=peerid)
+* `READ_RECEIPT` - Used for provide confirmation to the sender that a message was received and viewed (simultaneous pubsub w/ topic=groupid and BFP transaction)
+
+Users store and pin their own messages on a locally running IPFS node.  Admins can provide.  The directory structure for the files stored by each user is illustrated below.
 
 The IPFS files repository contains two main directories, `myIpns` and `files`.  
 
@@ -72,7 +77,7 @@ The IPFS files repository contains two main directories, `myIpns` and `files`.
 
 ### Messaging and File Formats
 
-The format for all pubsub messages between peers and IPFS files are defined using the following protobuf message definitions.  Some of the message definitions have not yet been implemented in the reference SLP chat application and are subject to change by the time this initial version of this specification is published.
+The format for all messages between peers and files are defined using the following protobuf message definitions.  Some of the message definitions have not yet been implemented in the reference SLP chat application and are subject to change by the time this initial version of this specification is published.
 
 ```protobuf
   syntax = "proto3";
@@ -80,9 +85,9 @@ The format for all pubsub messages between peers and IPFS files are defined usin
   // This message is used by all users located in the users's MFS
   // at: /myIpns/groups/<group id hex>/index
   message ChatGroupIndexFile {
-    string user_msg_dir_cid = 1;
-    string admin_group_info_cid = 2;  // used by admins only
-    string handle = 3;
+    string user_msg_dir_cid = 1;     // req, the CID hash of a directory containing the user's chat files for this group
+    string admin_group_info_cid = 2; // opt, used by admins only
+    string handle = 3;               // opt, user can set a custom handle for identification within the group
   }
 
   // This message can be optionally included within the Group Chat NFT1 Genesis transaction
@@ -97,7 +102,7 @@ The format for all pubsub messages between peers and IPFS files are defined usin
   // Currently this is not implemented anywhere.
   //
   message ChatGroupGenesisUrl {
-    bytes admin_pubkey = 1;
+    bytes admin_pubkey = 1;         // req, the public key associated with the administrator controlling the details of the group
   }
 
   // Group admin only: this is an optional document to provide
@@ -106,19 +111,23 @@ The format for all pubsub messages between peers and IPFS files are defined usin
   // Currently this is not implemented anywhere
   //
   message ChatGroupInfoFile {
-    string group_name = 1;
-    string group_description = 2;
-    string url = 3;
-    bool require_encryption = 4;
-    bool confidential_conversation = 5;
-    repeated string swarm_addresses = 6;
-    repeated string slpdb_addresses = 7;
+    int64 spec_version = 1;              // the spec version that new messages should follow, starts v1
+    string group_name = 2;               // opt, group name
+    string group_description = 3;        // opt, description
+    string url = 4;                      // opt, any url linked to info about the group
+    bool require_encryption = 5;         // req, will admin acknowledge unencrypted messages from clients
+    bool hardened_notifications = 6;     // req, p2p messages shall be hardened using BPF to prevent libp2p failure
+    bool confidential_conversation = 7;  // req, the information in the group is strictly confidential
+    repeated string swarm_addresses = 8; // opt, list of swarm addresses users should use for p2p connection 
+    repeated string slpdb_addresses = 9; // opt, list of slpdb urls available to the users (can be private)
+    repeated string bch_addresses = 10;  // opt, list of full nodes available to the users (can be private)
+    // ipfs_http_url = 11;               // future, pinning server url
   }
 
   // This message is for each chat user and shall be included
   // within the documentURL field of the user's NFT Genesis transaction.
   message ChatUserGenesisUrl {
-    bytes user_pubkey = 1;
+    bytes user_pubkey = 1;       // req, the public key associated with the user's identity
   }
 
   // This message represents the actual chat messages themselves, it is used
@@ -126,14 +135,14 @@ The format for all pubsub messages between peers and IPFS files are defined usin
   // fetch as a file from IPFS when resolving chat history
   message ChatMessagePayloadPb {
     enum ChatFileType {
-      UTF8 = 0;
-      FILE = 1;
-      ECIES_SECP256K1_UTF8 = 2;
-      ECIES_SECP256K1_FILE = 3;
+      UTF8 = 0;                  // used for clear text chat messages
+      FILE = 1;                  // used for clear file transfer
+      ECIES_SECP256K1_UTF8 = 2;  // used for encrypted text chat messages
+      ECIES_SECP256K1_FILE = 3;  // used for encrypted fil transfer
     }
     message ChatMessagePayloadItemPb {
-        bytes payload = 1;
-        bytes pubkey = 2;
+      bytes payload = 1;         // req, message payload having a format identified by "type"
+      bytes pubkey = 2;          // opt, pubkey identifying the intended recipient of the payload
     }
     ChatFileType type = 1;
     repeated ChatMessagePayloadItemPb payload = 2;
@@ -147,20 +156,28 @@ The format for all pubsub messages between peers and IPFS files are defined usin
       GROUP_SEND = 0;
       NAME_REQUEST = 1;
       NAME_RESPONSE = 2;
+      NAME_UPDATE = 3;
+      READ_RECEIPT = 4;
     }
-    PubsubType type = 1;
-    bytes payload = 2;
+    PubsubType type = 1;    // req, type of pubsub message
+    bytes payload = 2;      // opt, pubsub message payload having format identified by "type"
   }
 
-  // This is the pubsub payload for GROUP_SEND
+  // This is a GROUP_SEND message notification is to be transported via libp2p pubsub and
+  // as a Bitcoin Files Protocol (BFP) payload.
+  // 
+  // Transport requirements:
+  // * pubsub: shall be published with topic=<group_id_hex_lowercase>
+  // * BFP: shall be published with dust being sent to the sender
+  //
   message PubsubGroupSend {
     bytes groupid = 1;
     int64 time = 2;
     string msg_cid = 3;
     string msg_dir_cid = 4;
     string name_dir_cid = 5;
-    bytes name_dir_cid_sig = 6;
-    bytes message = 7;
+    bytes name_dir_cid_sig = 6;   // v1 req
+    bytes message = 7;            // v1 opt, include the chat message payload (associated with msg_cid) for fast client loading
   }
 
   // This is the pubsub payload for NAME_REQUEST
@@ -177,6 +194,10 @@ The format for all pubsub messages between peers and IPFS files are defined usin
     string cid = 2;
     int64 time = 3;
     bytes cid_sig = 4;
+  }
+
+  message PubsubReceipt {
+    string cid = 1;
   }
 
   // This data structure can be used to persist the Mapping of
@@ -202,4 +223,3 @@ The format for all pubsub messages between peers and IPFS files are defined usin
     repeated MapItem pinset = 1;
   }
 ```
-
