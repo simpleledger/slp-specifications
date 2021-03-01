@@ -107,6 +107,28 @@ A folder message type stores one or more transaction hashes pointing to files an
 
 The rules for determining what files and folders are contained within in a folder are simple.  An implementation shall parse the Metadata OP_RETURN message and any upstream List Page OP_RETURN message transactions using the specified format for the Metadata and List Page OP_RETURN messages.
 
+### 2.5 A File (BFP Message Type = 0x04)
+
+This type is nearly identical to the 0x02 file type, however, this version eliminates third person malleability and increases the number of pushes per transaction without the possibility of outputs being stolen.
+
+The scripts below are designed with transaction standardness limits in mind.
+
+Redeem script shall have the following format:
+`OP_HASH160 OP_SWAP OP_HASH160 OP_CAT OP_2DUP OP_CAT OP_HASH160 <hash> OP_EQUALVERIFY <push1> OP_2DROP OP_CHECKSIGVERIFY OP_DEPTH OP_NOT`
+
+Unlocking script shall have the following format:
+`<signature> <pubkey> <push2> <push3>`
+
+where `hash`: `HASH160(public key || HASH260(push 3) || HASH160(push 2))`
+
+For maximum efficiency, it is suggested that
+
+- `push 1` is of length `480` bytes
+- `push 2` is of length `520` bytes
+- `push 3` is of length `493` bytes (`502` if `signature` is Schnorr-signed)
+
+The transactions may have OP_RETURN outputs as well. The next transaction's inputs must be read before the current transaction's OP_RETURN push.
+
 ## 3. OP_RETURN Syntax and Format Requirements
 
 1. Data fields are represented using the field's name within angle brackets (i.e.,  `<some_field_name>` )
