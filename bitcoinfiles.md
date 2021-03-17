@@ -2,7 +2,7 @@
 
 # Bitcoin Files Protocol Specification
 
-### Specification version: 0.5
+### Specification version: 0.6
 ### Date orginally published: September 21, 2018
 
 ### URI: [bitcoinfiles.com](bitcoinfiles.com)
@@ -74,16 +74,25 @@ Cases where `file_uri_utf8` is provided to an off-chain storage location impleme
 
 ### 2.3 A File (BFP Message Type = 0x02)
 
-Larger files (~100KB) may be stored on-chain using `bfp_msg_type` 0x02. This type is nearly identical to the 0x01 file type, however, files are uploaded to the blockchain in a series of data chunks encapsulated within the spending of P2SH outputs within `scriptSig` located at vin=0 (i.e. the first input index) for each data chunk's respective transaction.  The file chunks reference each other using the vout=1 output as a pointer to the location of the next data chunk.  The file can be shared with anyone by sharing the transaction hash of the last uploaded data chunk containing optional file metadata.  
+Larger files (~100KB) may be stored on-chain using `bfp_msg_type` 0x02. This type is nearly identical to the 0x01 file type, however, files are uploaded to the blockchain in a series of data chunks encapsulated within the spending of P2SH outputs within `scriptSig` spaces and `OP_RETURN` outputs. The file can be shared with anyone by sharing the transaction hash of the last uploaded data chunk containing optional file metadata.  
+
+The scripts below are designed with transaction standardness limits in mind:
 
 Redeem script shall have the following format:
-`OP_DROP ... OP_DROP <PubKey> OP_CHECKSIG`
+`OP_HASH160 OP_SWAP OP_HASH160 OP_CAT OP_2DUP OP_CAT OP_HASH160 <hash> OP_EQUALVERIFY <push1> OP_2DROP OP_CHECKSIGVERIFY OP_DEPTH OP_NOT`
 
 Unlocking script shall have the following format:
-`<signature> <data> ... <data> <redeem script>`
+`<signature> <pubkey> <push2> <push3>`
 
-Where `...` may represent `OP_DROP` and `<data>`repeated any number of valid times. The data items are pushed in approximately 520 byte pieces and shall be concatenated together to produce the whole data chunk associated with the transaction.
+where `hash`: `HASH160(public key || HASH260(push3) || HASH160(push2))`
 
+For maximum efficiency, it is suggested that
+
+- `push 1` is of length `480` bytes
+- `push 2` is of length `520` bytes
+- `push 3` is of length `493` bytes (`502` if `signature` is Schnorr-signed)
+
+The transactions may have OP_RETURN outputs as well. The next transaction's `scriptSig`s must be read before the current transaction's OP_RETURN push. Inputs must be decoded with increasing `vin` indices.
 
 ### 2.4 Folders (BFP Message Type = 0x03)
 
@@ -141,7 +150,7 @@ The usage of a transaction id prefix shall have no impact on the protocol rules,
 
 * **v0.2 - September 26, 2018**
   * Added BFP Message Type ( `bfp_msg_type` )
-  * Added folder BFP Message Type = 0x02
+  * Added folder BFP Message Type = 0x03
   * Added file URI preferences
   * Added file encryption considerations
   * Added Appendix A - IPFS Considerations
