@@ -555,10 +555,6 @@ SCRIPT BROKEN DOWN:
   <td>'Tether Ltd. US dollar backed tokens'</td>
  <tr>
  <tr>
-  <td>47454e45534953</td>
-  <td>'GENESIS'</td>
- <tr>
- <tr>
   <td>41</td>
   <td>length of token_document_url (65 bytes)</td>
  <tr>
