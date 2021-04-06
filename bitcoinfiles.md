@@ -81,22 +81,39 @@ The scripts below are designed with the following transaction limits in mind:
 - Max script element size of 520 bytes (consensus limit)
 - Max `scriptSig` size of 1650 bytes per input (standardness limit)
 
+Unlocking script shall have the following format (adhering to the P2SH specification):
+`<signature> <public key> <push1> <push2> <redeem script>`
+
 Redeem script shall have the following format:
-`OP_HASH160 OP_SWAP OP_HASH160 OP_CAT OP_2DUP OP_CAT OP_HASH160 <hash> OP_EQUALVERIFY <push1> OP_2DROP OP_CHECKSIGVERIFY OP_DEPTH OP_NOT`
+`OP_HASH160 OP_SWAP OP_HASH160 OP_CAT OP_2DUP OP_CAT OP_HASH160 <hash> OP_EQUALVERIFY <push3> OP_2DROP OP_CHECKSIGVERIFY OP_DEPTH OP_NOT`
 
-Unlocking script shall have the following format:
-`<signature> <pubkey> <push2> <push3>`
-
-where `hash`: `HASH160(public key || HASH260(push3) || HASH160(push2))`
+where `hash`: `HASH160(public key || HASH160(push2) || HASH160(push1))`
 
 For maximum efficiency, it is suggested that
 
-- `push 1` is of length `480` bytes
-- `push 2` is of length `520` bytes
-- `push 3` is of length `493` bytes (`502` if `signature` is Schnorr-signed)
+- `push 1` is of length `520` bytes
+- `push 2` is of length `493` bytes (`502` if `signature` is Schnorr-signed)
+- `push 3` is of length `480` bytes
 
-The transactions may have OP_RETURN outputs as well. The next transaction's `scriptSig`s must be read before the current transaction's OP_RETURN push. Inputs must be decoded with increasing `vin` indices.
+The `vout = 0` output of every upload transaction shall be an `OP_RETURN` push.
 
+To upload, for every transaction:
+- The P2SH outputs are redeemed in the order that increasing `vin` corresponds to increasing data index. (Not applicable to the initial transaction)
+- The `OP_RETURN` output is formed
+- P2SH outputs are formed
+
+The last transaction, redeeming P2SH outputs but not creating newer ones, shall have a metadata-only `OP_RETURN` push.
+
+Padding shall be added to satisfy the conditions that the redeem script above is valid and that every P2SH push is at least `220` bytes. While reading, the bytes after `file_byte_count_int` in the metadata will be discarded.
+
+To read transactions from the latest to the earliest the following procedure is suggested, where `chunks` is a push-to-end sequence of byte arrays:
+- Read the metadata `OP_RETURN` push
+- Append the concatenated P2SH input pushes with increasing index as one element to `chunks`
+- Loop reading previous transactions until the number of transactions given in the metadata is read
+- - Append the `OP_RETURN` push to `chunks`
+- - Append the concatenated P2SH input pushes with increasing index as one element to `chunks`
+- Reverse the order of byte arrays in `chunks` (but not the arrays themselves)
+- Concatenate `chunks` to form one byte array
 ### 2.4 Folders (BFP Message Type = 0x03)
 
 A folder message type stores one or more transaction hashes pointing to files and other folders.  This type of message simply provides a list of transaction hashes.
