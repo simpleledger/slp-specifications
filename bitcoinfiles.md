@@ -76,7 +76,10 @@ Cases where `file_uri_utf8` is provided to an off-chain storage location impleme
 
 Larger files (~100KB) may be stored on-chain using `bfp_msg_type` 0x02. This type is nearly identical to the 0x01 file type, however, files are uploaded to the blockchain in a series of data chunks encapsulated within the spending of P2SH outputs within `scriptSig` spaces and `OP_RETURN` outputs. The file can be shared with anyone by sharing the transaction hash of the last uploaded data chunk containing optional file metadata.  
 
-The scripts below are designed with transaction standardness limits in mind:
+The scripts below are designed with the following transaction limits in mind:
+
+- Max script element size of 520 bytes (consensus limit)
+- Max `scriptSig` size of 1650 bytes per input (standardness limit)
 
 Redeem script shall have the following format:
 `OP_HASH160 OP_SWAP OP_HASH160 OP_CAT OP_2DUP OP_CAT OP_HASH160 <hash> OP_EQUALVERIFY <push1> OP_2DROP OP_CHECKSIGVERIFY OP_DEPTH OP_NOT`
