@@ -95,7 +95,7 @@ For maximum efficiency, it is suggested that
 - `push 2` is of length `493` bytes (`502` if `signature` is Schnorr-signed)
 - `push 3` is of length `480` bytes
 
-The `vout = 0` output of every upload transaction shall be an `OP_RETURN` push.
+P2SH outputs shall follow immediately after the `OP_RETURN` push starting at `vout=1`. They shall be contiguous, and spent in the same order starting at `vin=0`. For example, `vout=1` would be spent in `vin=0`, `vout=2` spent to `vin=1`, etc.
 
 To upload, for every transaction:
 - The P2SH outputs are redeemed in the order that increasing `vin` corresponds to increasing data index. (Not applicable to the initial transaction)
@@ -106,6 +106,8 @@ The last transaction, redeeming P2SH outputs but not creating newer ones, shall 
 
 Padding shall be added to satisfy the conditions that the redeem script above is valid and that every P2SH push is at least `220` bytes. While reading, the bytes after `file_byte_count_int` in the metadata will be discarded.
 
+In this protocol, `chunk_count_int` refers to the number of transactions that have `OP_RETURN` data pushes.
+
 To read transactions from the latest to the earliest the following procedure is suggested, where `chunks` is a push-to-end sequence of byte arrays:
 - Read the metadata `OP_RETURN` push
 - Append the concatenated P2SH input pushes with increasing index as one element to `chunks`
@@ -114,6 +116,7 @@ To read transactions from the latest to the earliest the following procedure is 
 - - Append the concatenated P2SH input pushes with increasing index as one element to `chunks`
 - Reverse the order of byte arrays in `chunks` (but not the arrays themselves)
 - Concatenate `chunks` to form one byte array
+
 ### 2.4 Folders (BFP Message Type = 0x03)
 
 A folder message type stores one or more transaction hashes pointing to files and other folders.  This type of message simply provides a list of transaction hashes.
