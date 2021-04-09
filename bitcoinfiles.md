@@ -98,24 +98,25 @@ For maximum efficiency, it is suggested that
 P2SH outputs shall follow immediately after the `OP_RETURN` push starting at `vout=1`. They shall be contiguous, and spent in the same order starting at `vin=0`. For example, `vout=1` would be spent in `vin=0`, `vout=2` spent to `vin=1`, etc.
 
 To upload, for every transaction:
-- The P2SH outputs are redeemed in the order that increasing `vin` corresponds to increasing data index. (Not applicable to the initial transaction)
+- P2SH outputs are redeemed in the order that increasing `vin` corresponds to increasing data index (Not applicable to the initial transaction)
 - The `OP_RETURN` output is formed
 - P2SH outputs are formed
 
-The last transaction, redeeming P2SH outputs but not creating newer ones, shall have a metadata-only `OP_RETURN` push.
+The last transaction, redeeming P2SH outputs but not creating newer ones, shall have a metadata-containing `OP_RETURN` push which may also contain data.
 
-Padding shall be added to satisfy the conditions that the redeem script above is valid and that every P2SH push is at least `220` bytes. While reading, the bytes after `file_byte_count_int` in the metadata will be discarded.
+Padding shall be added to satisfy the conditions that the redeem script above is valid and that every P2SH push is at least `110` bytes. While reading, the bytes after `file_byte_count_int` given in the metadata will be discarded.
 
-In this protocol, `chunk_count_int` refers to the number of transactions that have `OP_RETURN` data pushes.
+In this protocol, `chunk_count_int` refers to the number of transactions that have `OP_RETURN` data pushes (including the last transaction unless it is metadata-only).
 
 To read transactions from the latest to the earliest the following procedure is suggested, where `chunks` is a push-to-end sequence of byte arrays:
-- Read the metadata `OP_RETURN` push
+- Read the metadata-containing `OP_RETURN` push
+- If the `OP_RETURN` push contains data (`chunk_X_data_bytes`), append it to `chunks` and subtract 1 from transactions-to-be-read
 - Append the concatenated P2SH input pushes with increasing index as one element to `chunks`
 - Loop reading previous transactions until the number of transactions given in the metadata is read
 - - Append the `OP_RETURN` push to `chunks`
 - - Append the concatenated P2SH input pushes with increasing index as one element to `chunks`
 - Reverse the order of byte arrays in `chunks` (but not the arrays themselves)
-- Concatenate `chunks` to form one byte array
+- Concatenate `chunks` to form a byte array
 
 ### 2.4 Folders (BFP Message Type = 0x03)
 
