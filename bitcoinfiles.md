@@ -92,8 +92,8 @@ where `hash`: `HASH160(public key || HASH160(push2) || HASH160(push1))`
 For maximum efficiency, it is suggested that
 
 - `push 1` is of length `520` bytes
-- `push 2` is of length `493` bytes (`502` if `signature` is Schnorr-signed)
-- `push 3` is of length `480` bytes
+- `push 2` is of length `493` bytes (`501` if `signature` is Schnorr-signed)
+- `push 3` is of length `484` bytes
 
 P2SH outputs shall follow immediately after the `OP_RETURN` push starting at `vout=1`. They shall be contiguous, and spent in the same order starting at `vin=0`. For example, `vout=1` would be spent in `vin=0`, `vout=2` spent to `vin=1`, etc.
 
